@@ -1,0 +1,177 @@
+<header class="oi-topbar" aria-label="Navegación principal">
+  <div class="oi-topbar-inner">
+
+    <!-- Hamburguesa (solo móvil) -->
+    <button
+      type="button"
+      class="oi-tb-burger oi-tb-iconbtn"
+      (click)="toggleMenu('mobile')"
+      aria-label="Abrir menú"
+    >
+      <lucide-icon [img]="icons.menu" [size]="18"></lucide-icon>
+    </button>
+
+    <!-- Marca -->
+    <a class="oi-tb-brand" [routerLink]="homeLink()" (click)="closeMenus()">
+      <span class="oi-tb-mark">CRE</span>
+      <span class="oi-tb-brandsub">Gestión de Trámites</span>
+    </a>
+
+    <!-- Navegación de dominios (desktop) -->
+    <nav class="oi-tb-nav">
+      @for (d of dominios(); track d.link) {
+        <a
+          class="oi-tb-link"
+          [routerLink]="d.link"
+          routerLinkActive="active"
+          (click)="closeMenus()"
+        >{{ d.label }}</a>
+      }
+    </nav>
+
+    <!-- Acciones (derecha) -->
+    <div class="oi-tb-actions">
+      <!-- Buscador / command palette -->
+      <button type="button" class="oi-tb-search" (click)="openPalette()" aria-label="Buscar">
+        <lucide-icon [img]="icons.search" [size]="15"></lucide-icon>
+        <span class="oi-tb-search-label">Buscar…</span>
+        <kbd class="oi-tb-kbd oi-mono">Ctrl K</kbd>
+      </button>
+
+      <!-- Campana con popover -->
+      <div class="oi-tb-item">
+        <button
+          type="button"
+          class="oi-tb-iconbtn"
+          [class.active]="openMenu() === 'bell'"
+          (click)="toggleMenu('bell')"
+          aria-label="Notificaciones"
+        >
+          <lucide-icon [img]="icons.bell" [size]="18"></lucide-icon>
+          @if (notif.noLeidas() > 0) {
+            <span class="oi-tb-badge oi-mono">{{ notif.noLeidas() > 9 ? '9+' : notif.noLeidas() }}</span>
+          }
+        </button>
+
+        @if (openMenu() === 'bell') {
+          <div class="oi-tb-popover oi-tb-bell" role="menu">
+            <header class="oi-pop-head">
+              <span class="oi-pop-title">Notificaciones</span>
+              @if (notif.noLeidas() > 0) {
+                <button type="button" class="oi-pop-action" (click)="marcarTodas()">
+                  <lucide-icon [img]="icons.markAll" [size]="14"></lucide-icon> Marcar todas
+                </button>
+              }
+            </header>
+            <div class="oi-pop-list">
+              @for (n of ultimas(); track n.id) {
+                <button type="button" class="oi-pop-item" [class.unread]="!n.leida" (click)="abrirNotificacion(n)">
+                  <span class="oi-pop-dot" [class.on]="!n.leida" aria-hidden="true"></span>
+                  <span class="oi-pop-body">
+                    <span class="oi-pop-item-title">{{ n.titulo }}</span>
+                    <span class="oi-pop-item-msg">{{ n.mensaje }}</span>
+                  </span>
+                </button>
+              } @empty {
+                <div class="oi-pop-empty">Sin notificaciones</div>
+              }
+            </div>
+            <a class="oi-pop-foot" routerLink="/notificaciones" (click)="closeMenus()">
+              Ver todas <lucide-icon [img]="icons.arrow" [size]="14"></lucide-icon>
+            </a>
+          </div>
+        }
+      </div>
+
+      <!-- Tema -->
+      <button
+        type="button"
+        class="oi-tb-iconbtn"
+        (click)="theme.toggle()"
+        [attr.aria-label]="theme.mode() === 'dark' ? 'Modo claro' : 'Modo oscuro'"
+      >
+        <lucide-icon [img]="theme.mode() === 'dark' ? icons.sun : icons.moon" [size]="18"></lucide-icon>
+      </button>
+
+      <!-- Avatar -->
+      <div class="oi-tb-item">
+        <button
+          type="button"
+          class="oi-tb-avatar"
+          [class.active]="openMenu() === 'avatar'"
+          (click)="toggleMenu('avatar')"
+          aria-label="Cuenta"
+        >{{ inicial() }}</button>
+
+        @if (openMenu() === 'avatar') {
+          <div class="oi-tb-popover oi-tb-avatar-menu" role="menu">
+            @if (usuario(); as u) {
+              <div class="oi-av-head">
+                <span class="oi-av-name">{{ u.nombre }}</span>
+                <span class="oi-av-role oi-eyebrow">{{ u.rol }}</span>
+              </div>
+            }
+            <button type="button" class="oi-av-item danger" (click)="logout()">
+              <lucide-icon [img]="icons.logout" [size]="16"></lucide-icon> Cerrar sesión
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdrops / drawer móvil -->
+  @if (openMenu() === 'mobile') {
+    <div class="oi-tb-scrim" (click)="closeMenus()"></div>
+    <aside class="oi-drawer" aria-label="Menú">
+      <header class="oi-drawer-head">
+        <span class="oi-tb-mark">CRE</span>
+        <button type="button" class="oi-tb-iconbtn" (click)="closeMenus()" aria-label="Cerrar">
+          <lucide-icon [img]="icons.close" [size]="18"></lucide-icon>
+        </button>
+      </header>
+      <nav class="oi-drawer-nav">
+        @for (l of allLinks(); track l.link) {
+          <a class="oi-drawer-item" [routerLink]="l.link" routerLinkActive="active" (click)="closeMenus()">
+            <lucide-icon [img]="l.icon" [size]="17"></lucide-icon>
+            <span>{{ l.label }}</span>
+          </a>
+        }
+      </nav>
+    </aside>
+  } @else if (openMenu()) {
+    <div class="oi-tb-backdrop" (click)="closeMenus()"></div>
+  }
+</header>
+
+<!-- Command palette (Ctrl/⌘ K) -->
+@if (paletteOpen()) {
+  <div class="oi-pal-scrim" (click)="closePalette()"></div>
+  <div class="oi-pal" role="dialog" aria-label="Buscar y navegar">
+    <div class="oi-pal-search">
+      <lucide-icon [img]="icons.search" [size]="18"></lucide-icon>
+      <input
+        #palInput
+        class="oi-pal-input"
+        type="text"
+        [value]="query()"
+        (input)="onQuery($event)"
+        (keydown.enter)="goFirst()"
+        placeholder="Buscar páginas…"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="oi-tb-kbd oi-mono">Esc</kbd>
+    </div>
+    <ul class="oi-pal-list">
+      @for (r of filtered(); track r.link) {
+        <a class="oi-pal-item" [routerLink]="r.link" (click)="closePalette()">
+          <lucide-icon [img]="r.icon" [size]="16"></lucide-icon>
+          <span>{{ r.label }}</span>
+        </a>
+      } @empty {
+        <li class="oi-pal-empty">Sin resultados</li>
+      }
+    </ul>
+  </div>
+}

@@ -3,10 +3,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DocumentoService } from '../../core/services/documento.service';
 import { Documento } from '../../core/models/documento.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-documentos',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TableComponent, ColumnTemplateDirective, StatusBadgeComponent],
   templateUrl: './documentos.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -18,6 +22,13 @@ export class DocumentosComponent {
   readonly modoEdicion = signal(false);
   readonly editandoId = signal('');
   readonly loading = signal(false);
+
+  readonly columnas: ColumnDef[] = [
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'descripcion', label: 'Descripción', sortable: false },
+    { key: 'activo', label: 'Estado', sortable: false },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'right' },
+  ];
   readonly error = signal('');
   readonly exito = signal('');
 

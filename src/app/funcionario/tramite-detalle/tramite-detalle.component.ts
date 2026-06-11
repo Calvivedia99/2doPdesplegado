@@ -5,14 +5,18 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { WorkflowService } from '../../core/services/workflow.service';
 import { CompletarNodoRequest, TramiteDetalle } from '../../core/models/tramite.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
+import { estadoVariant } from '../../shared/ui/estado-visual';
 
 @Component({
   selector: 'app-tramite-detalle',
-  imports: [RouterLink, ReactiveFormsModule, DatePipe],
+  imports: [RouterLink, ReactiveFormsModule, DatePipe, StatusBadgeComponent],
   templateUrl: './tramite-detalle.component.html',
+  styleUrl: './tramite-detalle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TramiteDetalleComponent {
+  protected readonly estadoVariant = estadoVariant;
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly workflowSvc = inject(WorkflowService);
@@ -99,25 +103,6 @@ export class TramiteDetalleComponent {
         this.procesando.set(false);
       },
     });
-  }
-
-  getEstadoBadgeClass(estado: string): string {
-    const clases: Record<string, string> = {
-      // Estados globales del trámite (nuevo modelo)
-      'En curso': 'bg-primary',
-      Observado: 'bg-warning text-dark',
-      Aprobado: 'bg-success',
-      Rechazado: 'bg-danger',
-      Cancelado: 'bg-secondary',
-      // Legacy
-      pendiente: 'bg-secondary',
-      en_progreso: 'bg-warning text-dark',
-      'En proceso': 'bg-primary',
-      completado: 'bg-success',
-      activo: 'bg-primary',
-      archivado: 'bg-secondary',
-    };
-    return clases[estado] ?? 'bg-secondary';
   }
 
   // CU-42 (ruta óptima IA) se removió de la vista del funcionario.

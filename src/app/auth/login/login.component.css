@@ -2,9 +2,153 @@
   display: block;
 }
 
-.login-page {
+.oi-login {
   min-height: 100dvh;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(13, 110, 253, 0.1), transparent 40%),
-    linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+}
+
+/* ── Panel de marca (izquierda) ─────────────────────────── */
+.oi-login-brand {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0b;
+  color: #ededef;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3.5rem;
+}
+.oi-login-glow {
+  position: absolute;
+  width: 720px;
+  height: 720px;
+  top: -160px;
+  left: -120px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, #6e6ade 55%, transparent) 0%,
+    transparent 62%
+  );
+  filter: blur(8px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.oi-login-brand-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 460px;
+}
+.oi-login-mark {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.oi-login-tagline {
+  margin: 0.5rem 0 1.25rem;
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.oi-login-lead {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #a1a1aa;
+  max-width: 420px;
+}
+.oi-login-foot {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 2rem;
+  color: #6e6e76;
+}
+
+/* ── Panel de formulario (derecha) ──────────────────────── */
+.oi-login-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  background: var(--cre-bg);
+}
+.oi-login-card {
+  width: 100%;
+  max-width: 400px;
+}
+.oi-login-head {
+  margin-bottom: 1.5rem;
+}
+.oi-login-mark-sm {
+  display: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--cre-text);
+}
+.oi-login-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--cre-text);
+}
+.oi-login-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.875rem;
+  color: var(--cre-text-muted);
+}
+
+.oi-field {
+  margin-bottom: 1rem;
+}
+.oi-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--cre-text);
+}
+.oi-field-error {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--cre-danger-500);
+}
+.oi-login-submit {
+  width: 100%;
+  height: 40px;
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+}
+
+/* ── Panel demo ─────────────────────────────────────────── */
+.oi-login-demo {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--cre-border);
+}
+.oi-login-demo-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 880px) {
+  .oi-login {
+    grid-template-columns: 1fr;
+  }
+  .oi-login-brand {
+    display: none;
+  }
+  .oi-login-mark-sm {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
 }

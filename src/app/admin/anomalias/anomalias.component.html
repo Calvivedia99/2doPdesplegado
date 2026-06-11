@@ -1,23 +1,20 @@
-<section class="container-fluid py-4">
+<section>
   <!-- Cabecera -->
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <div>
-      <h1 class="h4 mb-0">Anomalías detectadas por IA</h1>
-      <p class="text-muted small mb-0">
-        CU-45 — trámites que se desvían del flujo normal según el motor de detección.
-      </p>
-    </div>
+    <p class="text-muted small mb-0">
+      CU-45 — trámites que se desvían del flujo normal según el motor de detección.
+    </p>
     <div class="d-flex gap-2">
       <button
-        class="btn btn-sm btn-outline-secondary"
+        class="oi-btn oi-btn-secondary oi-btn-sm"
         type="button"
         (click)="cargar()"
         title="Solo recarga la lista de anomalías ya detectadas (no vuelve a analizar)."
       >
-        ↻ Refrescar lista
+        <lucide-icon [img]="refreshIcon" [size]="14"></lucide-icon> Refrescar lista
       </button>
       <button
-        class="btn btn-sm btn-primary"
+        class="oi-btn oi-btn-primary oi-btn-sm"
         type="button"
         [disabled]="detectando()"
         (click)="detectar()"
@@ -25,8 +22,10 @@
       >
         @if (detectando()) {
           <span class="spinner-border spinner-border-sm me-2"></span>
+        } @else {
+          <lucide-icon [img]="sparklesIcon" [size]="14"></lucide-icon>
         }
-        Detectar ahora ✨
+        Detectar ahora
       </button>
     </div>
   </div>
@@ -43,32 +42,24 @@
 
   <!-- Resumen + filtros -->
   @if (anomalias().length > 0) {
-    <div class="card border-0 shadow-sm mb-3">
-      <div class="card-body py-3">
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <span class="text-muted small me-2">Filtrar por categoría:</span>
-          <button
-            type="button"
-            class="btn btn-sm"
-            [class.btn-dark]="filtroCategoria() === null"
-            [class.btn-outline-dark]="filtroCategoria() !== null"
-            (click)="cambiarFiltro(null)"
-          >
-            Todas ({{ anomalias().length }})
-          </button>
-          @for (cat of categoriasDisponibles(); track cat) {
-            <button
-              type="button"
-              class="btn btn-sm"
-              [class.btn-dark]="filtroCategoria() === cat"
-              [class.btn-outline-dark]="filtroCategoria() !== cat"
-              (click)="cambiarFiltro(cat)"
-            >
-              {{ cat }} ({{ conteoPorCategoria()[cat] }})
-            </button>
-          }
-        </div>
-      </div>
+    <div class="an-filtros">
+      <span class="text-muted small me-1">Categoría:</span>
+      <button
+        type="button"
+        [class]="filtroCategoria() === null ? 'oi-btn oi-btn-sm oi-btn-secondary' : 'oi-btn oi-btn-sm oi-btn-ghost'"
+        (click)="cambiarFiltro(null)"
+      >
+        Todas ({{ anomalias().length }})
+      </button>
+      @for (cat of categoriasDisponibles(); track cat) {
+        <button
+          type="button"
+          [class]="filtroCategoria() === cat ? 'oi-btn oi-btn-sm oi-btn-secondary' : 'oi-btn oi-btn-sm oi-btn-ghost'"
+          (click)="cambiarFiltro(cat)"
+        >
+          {{ cat }} ({{ conteoPorCategoria()[cat] }})
+        </button>
+      }
     </div>
   }
 
@@ -77,50 +68,44 @@
       <div class="spinner-border text-primary" aria-hidden="true"></div>
     </div>
   } @else if (anomalias().length === 0) {
-    <div class="text-center text-muted py-5">
-      <p class="mb-2">No hay anomalías abiertas.</p>
-      <p class="small mb-0">
-        El scheduler diario corre a las 03:00 — o puedes dispararlo manualmente con "Detectar ahora".
-      </p>
-    </div>
+    <app-empty-state
+      title="No hay anomalías abiertas"
+      description="El scheduler diario corre a las 03:00 — o puedes dispararlo manualmente con «Detectar ahora»."
+    />
   } @else {
-    <div class="row g-3">
+    <div class="an-grid">
       @for (a of anomaliasVisibles(); track a.id) {
-        <div class="col-lg-6 col-xl-4">
-          <article class="card border-0 shadow-sm h-100">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <span class="badge {{ badgeCategoria(a.categoria) }}">
-                  {{ a.categoria }}
-                </span>
-                <span class="text-muted small">
-                  score {{ a.score | number: '1.2-2' }} ({{ intensidad(a.score) }})
-                </span>
-              </div>
-
-              <h2 class="h6 mb-2">Trámite {{ a.tramiteCodigo ?? '—' }}</h2>
-              <p class="small text-muted mb-3">{{ a.descripcion }}</p>
-
-              <div class="small text-muted">
-                Detectada {{ a.fechaDeteccion ? (a.fechaDeteccion | date: 'short') : '—' }}
-              </div>
+        <article class="oi-card an-card">
+          <div class="an-card-body">
+            <div class="an-card-top">
+              <app-status-badge [variant]="varianteCategoria(a.categoria)">{{ a.categoria }}</app-status-badge>
+              <span class="text-muted small oi-mono">
+                score {{ a.score | number: '1.2-2' }} ({{ intensidad(a.score) }})
+              </span>
             </div>
-            <div class="card-footer bg-white border-top-0 d-flex justify-content-end">
-              <button
-                type="button"
-                class="btn btn-sm btn-outline-warning"
-                [disabled]="procesandoId() === a.id"
-                (click)="marcarFalsoPositivo(a)"
-                title="Marcar esta anomalía como falso positivo (entra al dataset de feedback)"
-              >
-                @if (procesandoId() === a.id) {
-                  <span class="spinner-border spinner-border-sm me-1"></span>
-                }
-                Marcar falso positivo
-              </button>
+
+            <h2 class="an-title">Trámite <span class="oi-mono">{{ a.tramiteCodigo ?? '—' }}</span></h2>
+            <p class="an-desc">{{ a.descripcion }}</p>
+
+            <div class="an-fecha">
+              Detectada {{ a.fechaDeteccion ? (a.fechaDeteccion | date: 'short') : '—' }}
             </div>
-          </article>
-        </div>
+          </div>
+          <footer class="an-foot">
+            <button
+              type="button"
+              class="oi-btn oi-btn-ghost oi-btn-sm"
+              [disabled]="procesandoId() === a.id"
+              (click)="marcarFalsoPositivo(a)"
+              title="Marcar esta anomalía como falso positivo (entra al dataset de feedback)"
+            >
+              @if (procesandoId() === a.id) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+              }
+              Marcar falso positivo
+            </button>
+          </footer>
+        </article>
       }
     </div>
   }

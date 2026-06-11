@@ -19,11 +19,93 @@ export const routes: Routes = [
 				loadComponent: () =>
 					import('./admin/dashboard/dashboard.component').then((m) => m.DashboardComponent),
 			},
+
+			// ── Hub Organización (catálogos base en pestañas) ──
 			{
-				path: 'usuarios',
+				path: 'organizacion',
 				loadComponent: () =>
-					import('./admin/usuarios/usuarios-lista.component').then((m) => m.UsuariosListaComponent),
+					import('./admin/hubs/organizacion.component').then((m) => m.HubOrganizacionComponent),
+				children: [
+					{
+						path: 'departamentos',
+						loadComponent: () =>
+							import('./admin/departamentos/departamentos.component').then((m) => m.DepartamentosComponent),
+					},
+					{
+						path: 'actividades',
+						loadComponent: () =>
+							import('./admin/actividades/actividades.component').then((m) => m.ActividadesComponent),
+					},
+					{
+						path: 'documentos',
+						loadComponent: () =>
+							import('./admin/documentos/documentos.component').then((m) => m.DocumentosComponent),
+					},
+					{
+						path: 'usuarios',
+						loadComponent: () =>
+							import('./admin/usuarios/usuarios-lista.component').then((m) => m.UsuariosListaComponent),
+					},
+					{ path: '', redirectTo: 'departamentos', pathMatch: 'full' },
+				],
 			},
+
+			// ── Hub Flujos (políticas + diagramas en pestañas) ──
+			{
+				path: 'flujos',
+				loadComponent: () =>
+					import('./admin/hubs/flujos.component').then((m) => m.HubFlujosComponent),
+				children: [
+					{
+						path: 'politicas',
+						loadComponent: () =>
+							import('./admin/politicas/politicas-lista.component').then((m) => m.PoliticasListaComponent),
+					},
+					{
+						path: 'diagramas',
+						loadComponent: () =>
+							import('./admin/diagramas/diagramas-lista.component').then((m) => m.DiagramasListaComponent),
+					},
+					{
+						path: 'compartidos',
+						loadComponent: () =>
+							import('./admin/diagramas/diagramas-compartidos.component').then((m) => m.DiagramasCompartidosComponent),
+					},
+					{ path: '', redirectTo: 'politicas', pathMatch: 'full' },
+				],
+			},
+
+			// ── Hub Analítica (métricas + auditoría + IA en pestañas) ──
+			{
+				path: 'analitica',
+				loadComponent: () =>
+					import('./admin/hubs/analitica.component').then((m) => m.HubAnaliticaComponent),
+				children: [
+					{
+						path: 'metricas',
+						loadComponent: () =>
+							import('./admin/metricas/dashboard-metricas.component').then((m) => m.DashboardMetricasComponent),
+					},
+					{
+						path: 'historial',
+						loadComponent: () =>
+							import('./admin/historial/historial-tramites.component').then((m) => m.HistorialTramitesComponent),
+					},
+					{
+						path: 'anomalias',
+						loadComponent: () =>
+							import('./admin/anomalias/anomalias.component').then((m) => m.AnomaliasComponent),
+					},
+					{
+						path: 'reportes-naturales',
+						loadComponent: () =>
+							import('./admin/reportes-naturales/reportes-naturales.component').then((m) => m.ReportesNaturalesComponent),
+					},
+					{ path: '', redirectTo: 'metricas', pathMatch: 'full' },
+				],
+			},
+
+			// ── Formularios / editores / detalle (fuera de los hubs) ──
 			{
 				path: 'usuarios/nuevo',
 				loadComponent: () =>
@@ -33,21 +115,6 @@ export const routes: Routes = [
 				path: 'usuarios/:id/editar',
 				loadComponent: () =>
 					import('./admin/usuarios/usuario-form.component').then((m) => m.UsuarioFormComponent),
-			},
-			{
-				path: 'departamentos',
-				loadComponent: () =>
-					import('./admin/departamentos/departamentos.component').then((m) => m.DepartamentosComponent),
-			},
-			{
-				path: 'documentos',
-				loadComponent: () =>
-					import('./admin/documentos/documentos.component').then((m) => m.DocumentosComponent),
-			},
-			{
-				path: 'politicas',
-				loadComponent: () =>
-					import('./admin/politicas/politicas-lista.component').then((m) => m.PoliticasListaComponent),
 			},
 			{
 				path: 'politicas/nueva',
@@ -60,16 +127,6 @@ export const routes: Routes = [
 					import('./admin/politicas/politica-form.component').then((m) => m.PoliticaFormComponent),
 			},
 			{
-				path: 'actividades',
-				loadComponent: () =>
-					import('./admin/actividades/actividades.component').then((m) => m.ActividadesComponent),
-			},
-			{
-				path: 'diagramas',
-				loadComponent: () =>
-					import('./admin/diagramas/diagramas-lista.component').then((m) => m.DiagramasListaComponent),
-			},
-			{
 				path: 'diagramas/nuevo',
 				loadComponent: () =>
 					import('./admin/diagramas/diagrama-editor.component').then((m) => m.DiagramaEditorComponent),
@@ -80,39 +137,16 @@ export const routes: Routes = [
 					import('./admin/diagramas/diagrama-ia.component').then((m) => m.DiagramaIaComponent),
 			},
 			{
-				path: 'diagramas/compartidos',
+				path: 'sugerir-politica',
 				loadComponent: () =>
-					import('./admin/diagramas/diagramas-compartidos.component').then((m) => m.DiagramasCompartidosComponent),
+					import('./admin/sugerir-politica/sugerir-politica.component').then((m) => m.SugerirPoliticaComponent),
 			},
+			// `diagramas/compartidos` debe resolverse ANTES que `diagramas/:id`.
+			{ path: 'diagramas/compartidos', redirectTo: 'flujos/compartidos', pathMatch: 'full' },
 			{
 				path: 'diagramas/:id',
 				loadComponent: () =>
 					import('./admin/diagramas/diagrama-editor.component').then((m) => m.DiagramaEditorComponent),
-			},
-			{
-				path: 'metricas',
-				loadComponent: () =>
-					import('./admin/metricas/dashboard-metricas.component').then((m) => m.DashboardMetricasComponent),
-			},
-			{
-				path: 'historial',
-				loadComponent: () =>
-					import('./admin/historial/historial-tramites.component').then((m) => m.HistorialTramitesComponent),
-			},
-			{
-				path: 'anomalias',
-				loadComponent: () =>
-					import('./admin/anomalias/anomalias.component').then((m) => m.AnomaliasComponent),
-			},
-			{
-				path: 'reportes-naturales',
-				loadComponent: () =>
-					import('./admin/reportes-naturales/reportes-naturales.component').then((m) => m.ReportesNaturalesComponent),
-			},
-			{
-				path: 'sugerir-politica',
-				loadComponent: () =>
-					import('./admin/sugerir-politica/sugerir-politica.component').then((m) => m.SugerirPoliticaComponent),
 			},
 			{
 				path: 'documentos/:id/auditoria',
@@ -124,6 +158,20 @@ export const routes: Routes = [
 				loadComponent: () =>
 					import('./funcionario/expediente-digital/expediente-digital.component').then((m) => m.ExpedienteDigitalComponent),
 			},
+
+			// ── Redirects de URLs antiguas → hubs (no se rompen enlaces) ──
+			{ path: 'usuarios', redirectTo: 'organizacion/usuarios', pathMatch: 'full' },
+			{ path: 'departamentos', redirectTo: 'organizacion/departamentos', pathMatch: 'full' },
+			{ path: 'documentos', redirectTo: 'organizacion/documentos', pathMatch: 'full' },
+			{ path: 'actividades', redirectTo: 'organizacion/actividades', pathMatch: 'full' },
+			{ path: 'politicas', redirectTo: 'flujos/politicas', pathMatch: 'full' },
+			{ path: 'diagramas', redirectTo: 'flujos/diagramas', pathMatch: 'full' },
+			{ path: 'metricas', redirectTo: 'analitica/metricas', pathMatch: 'full' },
+			{ path: 'historial', redirectTo: 'analitica/historial', pathMatch: 'full' },
+			{ path: 'anomalias', redirectTo: 'analitica/anomalias', pathMatch: 'full' },
+			{ path: 'reportes-naturales', redirectTo: 'analitica/reportes-naturales', pathMatch: 'full' },
+
+			{ path: '', redirectTo: 'dashboard', pathMatch: 'full' },
 		],
 	},
 	{

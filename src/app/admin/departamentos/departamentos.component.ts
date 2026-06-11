@@ -3,10 +3,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DepartamentoService } from '../../core/services/departamento.service';
 import { Departamento, DepartamentoRequest } from '../../core/models/departamento.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-departamentos',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TableComponent, ColumnTemplateDirective, StatusBadgeComponent],
   templateUrl: './departamentos.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -20,6 +24,14 @@ export class DepartamentosComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly exito = signal('');
+
+  readonly columnas: ColumnDef[] = [
+    { key: 'codigo', label: 'Código', width: '120px' },
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'descripcion', label: 'Descripción', sortable: false },
+    { key: 'activo', label: 'Estado', sortable: false },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'right' },
+  ];
 
   readonly form = this.fb.nonNullable.group({
     codigo: ['', [Validators.required, Validators.maxLength(5)]],

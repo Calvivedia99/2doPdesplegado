@@ -16,7 +16,16 @@ export class ThemeService {
     effect(() => {
       const m = this._mode();
       if (!this.isBrowser) return;
-      document.documentElement.dataset['theme'] = m;
+      const root = document.documentElement;
+      root.dataset['theme'] = m;
+      // Puente Bootstrap: sincroniza data-bs-theme para que sus componentes
+      // (cards, tablas, form-control) respondan al mismo modo. Se elimina en Fase 5.
+      root.setAttribute('data-bs-theme', m);
+      // Mantiene la barra de navegador / PWA en color con el tema.
+      const themeColor = m === 'dark' ? '#0a0a0b' : '#fafafa';
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', themeColor);
       try {
         localStorage.setItem(this.storageKey, m);
       } catch {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { LucideAngularModule, LucideIconData, X, Plus } from 'lucide-angular';
 import { ActividadService } from '../../core/services/actividad.service';
 import { DepartamentoService } from '../../core/services/departamento.service';
 import { DocumentoService } from '../../core/services/documento.service';
@@ -9,6 +10,10 @@ import { Departamento } from '../../core/models/departamento.model';
 import { Documento } from '../../core/models/documento.model';
 import { PermisoDocumentalModalComponent } from '../../shared/permiso-documental-modal/permiso-documental-modal.component';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
 
 interface FuncionarioOption {
   id: string;
@@ -19,12 +24,31 @@ interface FuncionarioOption {
 
 @Component({
   selector: 'app-actividades',
-  imports: [ReactiveFormsModule, PermisoDocumentalModalComponent],
+  imports: [
+    ReactiveFormsModule,
+    PermisoDocumentalModalComponent,
+    LucideAngularModule,
+    TableComponent,
+    ColumnTemplateDirective,
+    StatusBadgeComponent,
+  ],
   templateUrl: './actividades.component.html',
   styleUrl: './actividades.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActividadesComponent {
+  protected readonly xIcon = X as LucideIconData;
+  protected readonly plusIcon = Plus as LucideIconData;
+
+  readonly columnasActividades: ColumnDef[] = [
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'departamentoId', label: 'Dept.', sortable: false },
+    { key: 'funcionarioResponsableId', label: 'Responsable', sortable: false },
+    { key: 'slaHoras', label: 'SLA', align: 'right' },
+    { key: 'documentoIds', label: 'Documentos', sortable: false, searchable: false },
+    { key: 'reutilizable', label: 'Reutiliz.', sortable: false, align: 'center' },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'right' },
+  ];
   private readonly fb = inject(FormBuilder);
   private readonly actividadSvc = inject(ActividadService);
   private readonly deptoSvc = inject(DepartamentoService);

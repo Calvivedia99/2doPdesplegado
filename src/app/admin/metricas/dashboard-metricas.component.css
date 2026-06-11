@@ -1,0 +1,40 @@
+:host { display: block; }
+
+.mt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+.mt-cuello {
+  padding: 1rem 1.1rem;
+  border-left: 3px solid var(--cre-danger-500);
+}
+.mt-cuello-title {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cre-text);
+}
+.mt-cuello-meta { margin: 0 0 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.mt-cuello-meta > div { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.8125rem; }
+.mt-cuello-meta dt { margin: 0; color: var(--cre-text-subtle); }
+.mt-cuello-meta dd { margin: 0; color: var(--cre-text); text-align: right; }
+.mt-desv { color: var(--cre-danger-500); font-weight: 600; }
+.mt-cuello-causa {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--cre-text-muted);
+}
+.mt-cuello-fecha { font-size: 0.72rem; color: var(--cre-text-subtle); }
+
+.mt-search { padding: 0; overflow: hidden; }
+.mt-search-head {
+  padding: 0.8rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cre-text);
+  border-bottom: 1px solid var(--cre-border);
+}
+.mt-search-body { padding: 1rem; }
+.mt-search-body .oi-input { max-width: 320px; }

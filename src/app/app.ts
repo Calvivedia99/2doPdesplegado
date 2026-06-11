@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
-import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { TopbarComponent } from './shared/topbar/topbar.component';
 import { ToastContainerComponent } from './shared/toast/toast-container.component';
 import { AsistenteChatComponent } from './shared/asistente-chat/asistente-chat.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent, ToastContainerComponent, AsistenteChatComponent],
+  imports: [RouterOutlet, TopbarComponent, ToastContainerComponent, AsistenteChatComponent],
   templateUrl: './app.html',
   styleUrl: './app.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

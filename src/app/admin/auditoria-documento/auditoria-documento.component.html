@@ -1,10 +1,10 @@
-<section class="container-fluid py-4">
+<section>
   <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div>
-      <a routerLink="/admin/politicas" class="small text-decoration-none">&larr; Políticas</a>
-      <h1 class="h4 mb-0 mt-1">
+      <a routerLink="/admin/flujos/politicas" class="oi-eyebrow" style="text-decoration: none">Políticas</a>
+      <h1 class="ad-title">
         Auditoría documental
-        <span class="text-muted fs-6">· documento {{ documentoId.slice(-6) }}</span>
+        <span class="text-muted">· documento <span class="oi-mono">{{ documentoId.slice(-6) }}</span></span>
       </h1>
       <p class="text-muted small mb-0">
         CU-37 — timeline inmutable de accesos, descargas y modificaciones.
@@ -12,14 +12,14 @@
     </div>
     <div class="d-flex gap-2">
       <button
-        class="btn btn-sm btn-outline-success"
+        class="oi-btn oi-btn-secondary oi-btn-sm"
         type="button"
         (click)="exportarCsv()"
         [disabled]="!hayDatos()"
       >
-        Descargar CSV (página actual)
+        Descargar CSV
       </button>
-      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="cargar()">
+      <button class="oi-btn oi-btn-secondary oi-btn-sm" type="button" (click)="cargar()">
         Actualizar
       </button>
     </div>
@@ -83,9 +83,10 @@
             Mostrando <strong>{{ conteoPagina() }}</strong> de esta página
           </span>
           @for (kv of conteoPorAccion() | keyvalue; track kv.key) {
-            <span class="badge {{ badgeAccion(kv.key) }}">
-              {{ iconoAccion(kv.key) }} {{ kv.key }} · {{ kv.value }}
-            </span>
+            <app-status-badge [variant]="varianteAccion(kv.key)">
+              <lucide-icon [img]="iconoAccion(kv.key)" [size]="12"></lucide-icon>
+              {{ kv.key }} · {{ kv.value }}
+            </app-status-badge>
           }
         </div>
       </div>
@@ -99,15 +100,15 @@
             <div class="time-col text-muted small">
               {{ it.timestamp | date: 'dd MMM HH:mm:ss' }}
             </div>
-            <div class="dot {{ badgeAccion(it.accion) }}">
-              {{ iconoAccion(it.accion) }}
+            <div class="dot dot-{{ varianteAccion(it.accion) }}">
+              <lucide-icon [img]="iconoAccion(it.accion)" [size]="14"></lucide-icon>
             </div>
             <div class="content flex-grow-1">
               <div class="d-flex flex-wrap gap-2 align-items-center">
-                <span class="badge {{ badgeAccion(it.accion) }}">{{ it.accion }}</span>
+                <app-status-badge [variant]="varianteAccion(it.accion)">{{ it.accion }}</app-status-badge>
                 <strong class="small">{{ it.usuarioNombre || '—' }}</strong>
                 @if (it.rol) {
-                  <span class="badge bg-light text-muted small">{{ it.rol }}</span>
+                  <span class="oi-badge oi-badge-neutral">{{ it.rol }}</span>
                 }
                 @if (it.versionId) {
                   <span class="text-muted small">· versión {{ it.versionId.slice(-6) }}</span>
@@ -135,16 +136,16 @@
         <span class="small text-muted">
           Página {{ p.number + 1 }} de {{ p.totalPages || 1 }}
         </span>
-        <div class="btn-group btn-group-sm">
-          <button class="btn btn-outline-secondary"
+        <div class="d-flex gap-2">
+          <button class="oi-btn oi-btn-secondary oi-btn-sm"
                   [disabled]="p.number === 0"
                   (click)="paginaAnterior()">
-            ← Anterior
+            Anterior
           </button>
-          <button class="btn btn-outline-secondary"
+          <button class="oi-btn oi-btn-secondary oi-btn-sm"
                   [disabled]="p.number >= p.totalPages - 1"
                   (click)="paginaSiguiente()">
-            Siguiente →
+            Siguiente
           </button>
         </div>
       </nav>

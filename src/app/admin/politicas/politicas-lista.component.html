@@ -1,150 +1,141 @@
-<section class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h4 mb-0">Politicas de Negocio</h1>
-    <a class="btn btn-primary" routerLink="/admin/politicas/nueva">+ Nueva Politica</a>
+<section>
+  <div class="d-flex justify-content-end align-items-center mb-3">
+    <a class="oi-btn oi-btn-primary oi-btn-sm" routerLink="/admin/politicas/nueva">Nueva política</a>
   </div>
 
   @if (exito()) {
-    <div class="alert alert-success" role="alert">{{ exito() }}</div>
+    <div class="alert alert-success py-2" role="alert">{{ exito() }}</div>
   }
-
   @if (error()) {
-    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
   }
 
   @if (loading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" aria-hidden="true"></div>
+    <div class="pc-grid">
+      @for (i of [0,1,2]; track i) {
+        <div class="oi-card pc-card pc-skeleton"></div>
+      }
     </div>
   } @else {
-    <div class="row g-3">
+    <div class="pc-grid">
       @for (politica of politicas(); track politica.id) {
-        <div class="col-md-6 col-lg-4">
-          <article class="card h-100 shadow-sm border-0">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-semibold text-truncate">{{ politica.nombre }}</span>
-              <span [class]="'badge ' + getEstadoBadgeClass(politica.estado)">
-                {{ politica.estado.toUpperCase() }}
-              </span>
-            </div>
+        <article class="oi-card pc-card">
+          <header class="pc-head">
+            <span class="pc-name">{{ politica.nombre }}</span>
+            <app-status-badge [variant]="variantePolitica(politica.estado)" [dot]="true">
+              {{ politica.estado }}
+            </app-status-badge>
+          </header>
 
-            <div class="card-body">
-              <p class="text-muted small mb-2">{{ politica.descripcion }}</p>
-              <div class="small">
-                <span class="text-muted">Categoria:</span> {{ politica.categoria }}<br />
-                <span class="text-muted">Version:</span> v{{ politica.versionActual }}<br />
-                <span class="text-muted">Diagrama:</span>
-                @if (politica.diagramaId) {
-                  <span class="text-success">Vinculado</span>
-                } @else {
-                  <span class="text-warning">Sin diagrama</span>
-                }
+          <div class="pc-body">
+            <p class="pc-desc">{{ politica.descripcion }}</p>
+            <dl class="pc-meta">
+              <div><dt>Categoría</dt><dd>{{ politica.categoria }}</dd></div>
+              <div><dt>Versión</dt><dd class="oi-mono">v{{ politica.versionActual }}</dd></div>
+              <div>
+                <dt>Diagrama</dt>
+                <dd>
+                  @if (politica.diagramaId) {
+                    <span class="pc-ok">Vinculado</span>
+                  } @else {
+                    <span class="pc-warn">Sin diagrama</span>
+                  }
+                </dd>
               </div>
-            </div>
+            </dl>
+          </div>
 
-            <div class="card-footer d-flex flex-wrap gap-1">
-              <a [routerLink]="['/admin/politicas', politica.id, 'editar']" class="btn btn-sm btn-outline-secondary">
-                Editar
-              </a>
-              @for (estado of getAccionesEstado(politica.estado); track estado) {
-                <button type="button" (click)="cambiarEstado(politica, estado)" class="btn btn-sm btn-outline-primary">
-                  -> {{ estado }}
-                </button>
-              }
+          <footer class="pc-foot">
+            <a [routerLink]="['/admin/politicas', politica.id, 'editar']" class="oi-btn oi-btn-secondary oi-btn-sm">
+              Editar
+            </a>
 
-              @if (politica.diagramaId) {
-                <a
-                  [routerLink]="['/admin/diagramas', politica.diagramaId]"
-                  class="btn btn-sm btn-outline-info"
-                >
-                  Ver Diagrama
-                </a>
-              } @else {
-                <a
-                  [routerLink]="['/admin/diagramas/nuevo']"
-                  [queryParams]="{ politicaId: politica.id }"
-                  class="btn btn-sm btn-outline-success"
-                >
-                  + Crear Diagrama
-                </a>
-                <button
-                  type="button"
-                  (click)="abrirModalAsignar(politica)"
-                  class="btn btn-sm btn-outline-info"
-                >
-                  Asignar Diagrama
-                </button>
-              }
-
-              <button type="button" (click)="eliminar(politica.id, politica.nombre)" class="btn btn-sm btn-outline-danger">
-                Eliminar
+            @for (estado of getAccionesEstado(politica.estado); track estado) {
+              <button type="button" (click)="cambiarEstado(politica, estado)" class="oi-btn oi-btn-ghost oi-btn-sm">
+                {{ estado }}
               </button>
-            </div>
-          </article>
-        </div>
+            }
+
+            @if (politica.diagramaId) {
+              <a [routerLink]="['/admin/diagramas', politica.diagramaId]" class="oi-btn oi-btn-ghost oi-btn-sm">
+                Ver diagrama
+              </a>
+            } @else {
+              <a
+                [routerLink]="['/admin/diagramas/nuevo']"
+                [queryParams]="{ politicaId: politica.id }"
+                class="oi-btn oi-btn-ghost oi-btn-sm"
+              >Crear diagrama</a>
+              <button type="button" (click)="abrirModalAsignar(politica)" class="oi-btn oi-btn-ghost oi-btn-sm">
+                Asignar
+              </button>
+            }
+
+            <button
+              type="button"
+              (click)="eliminar(politica.id, politica.nombre)"
+              class="oi-btn oi-btn-danger-outline oi-btn-sm pc-del"
+            >Eliminar</button>
+          </footer>
+        </article>
       } @empty {
-        <div class="col-12">
-          <div class="text-center text-muted py-5">Sin politicas registradas</div>
+        <div class="pc-empty">
+          <app-empty-state
+            title="Sin políticas registradas"
+            description="Crea la primera política para definir un tipo de trámite."
+          />
         </div>
       }
     </div>
   }
 
-  @if (mostrarModalAsignar()) {
-    <div class="modal-backdrop fade show"></div>
-    <div class="modal d-block" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Asignar diagrama existente</h5>
-            <button type="button" class="btn-close" aria-label="Cerrar" (click)="cerrarModalAsignar()"></button>
-          </div>
-          <div class="modal-body">
-            <p class="text-muted small mb-3">
-              Vincular a la politica
-              <strong>{{ politicaAsignando()?.nombre }}</strong> un diagrama
-              que aun no tiene politica asociada.
-            </p>
+  <!-- Asignar diagrama existente -->
+  <app-modal
+    [open]="mostrarModalAsignar()"
+    title="Asignar diagrama existente"
+    (closed)="cerrarModalAsignar()"
+  >
+    <p class="text-muted small mb-3">
+      Vincular a la política <strong>{{ politicaAsignando()?.nombre }}</strong> un diagrama
+      que aún no tiene política asociada.
+    </p>
 
-            @if (cargandoHuerfanos()) {
-              <div class="text-center py-3">
-                <div class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></div>
-              </div>
-            } @else if (diagramasHuerfanos().length === 0) {
-              <div class="alert alert-warning small mb-0">
-                No hay diagramas disponibles. Crea uno nuevo o desvincula otro primero.
-              </div>
-            } @else {
-              <label class="form-label" for="diagramaHuerfano">Diagrama disponible</label>
-              <select
-                id="diagramaHuerfano"
-                class="form-select"
-                [value]="diagramaSeleccionadoId()"
-                (change)="onDiagramaSeleccionado($event)"
-              >
-                <option value="">-- Selecciona un diagrama --</option>
-                @for (d of diagramasHuerfanos(); track d.id) {
-                  <option [value]="d.id">{{ d.nombre }} (v{{ d.versionActual }} - {{ d.estado }})</option>
-                }
-              </select>
-            }
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="cerrarModalAsignar()">Cancelar</button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              [disabled]="!diagramaSeleccionadoId() || asignando()"
-              (click)="confirmarAsignacion()"
-            >
-              @if (asignando()) {
-                <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-              }
-              Asignar
-            </button>
-          </div>
-        </div>
+    @if (cargandoHuerfanos()) {
+      <div class="text-center py-3">
+        <div class="spinner-border spinner-border-sm text-primary" aria-hidden="true"></div>
       </div>
+    } @else if (diagramasHuerfanos().length === 0) {
+      <div class="alert alert-warning small mb-0">
+        No hay diagramas disponibles. Crea uno nuevo o desvincula otro primero.
+      </div>
+    } @else {
+      <label class="oi-label" for="diagramaHuerfano">Diagrama disponible</label>
+      <select
+        id="diagramaHuerfano"
+        class="form-select"
+        [value]="diagramaSeleccionadoId()"
+        (change)="onDiagramaSeleccionado($event)"
+      >
+        <option value="">— Selecciona un diagrama —</option>
+        @for (d of diagramasHuerfanos(); track d.id) {
+          <option [value]="d.id">{{ d.nombre }} (v{{ d.versionActual }} - {{ d.estado }})</option>
+        }
+      </select>
+    }
+
+    <div modal-footer>
+      <button type="button" class="oi-btn oi-btn-secondary oi-btn-sm" (click)="cerrarModalAsignar()">Cancelar</button>
+      <button
+        type="button"
+        class="oi-btn oi-btn-primary oi-btn-sm"
+        [disabled]="!diagramaSeleccionadoId() || asignando()"
+        (click)="confirmarAsignacion()"
+      >
+        @if (asignando()) {
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+        }
+        Asignar
+      </button>
     </div>
-  }
+  </app-modal>
 </section>

@@ -3,14 +3,20 @@ import { RouterLink } from '@angular/router';
 import { WorkflowService } from '../../core/services/workflow.service';
 import { TramiteResumen } from '../../core/models/tramite.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
+import { estadoVariant } from '../../shared/ui/estado-visual';
 
 @Component({
   selector: 'app-tramites-lista',
-  imports: [RouterLink],
+  imports: [RouterLink, PageHeaderComponent, StatusBadgeComponent, EmptyStateComponent],
   templateUrl: './tramites-lista.component.html',
+  styleUrl: './tramites-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TramitesListaComponent {
+  protected readonly estadoVariant = estadoVariant;
   private readonly workflowSvc = inject(WorkflowService);
 
   readonly tramites = signal<TramiteResumen[]>([]);
@@ -62,25 +68,8 @@ export class TramitesListaComponent {
     return labels[prioridad] ?? `P${prioridad}`;
   }
 
-  getEstadoBadgeClass(estado: string): string {
-    const clases: Record<string, string> = {
-      // Estados globales del trámite (nuevo modelo)
-      'En curso': 'bg-primary',
-      Observado: 'bg-warning text-dark',
-      Aprobado: 'bg-success',
-      Rechazado: 'bg-danger',
-      Cancelado: 'bg-secondary',
-      // Legacy (compatibilidad con datos antiguos)
-      activo: 'bg-primary',
-      en_progreso: 'bg-warning text-dark',
-      'En proceso': 'bg-primary',
-      completado: 'bg-success',
-      archivado: 'bg-secondary',
-    };
-    return clases[estado] ?? 'bg-secondary';
-  }
-
   getFiltroButtonClass(estado: string): string {
-    return this.filtroEstado() === estado ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary';
+    const active = this.filtroEstado() === estado;
+    return active ? 'oi-btn oi-btn-sm oi-btn-secondary' : 'oi-btn oi-btn-sm oi-btn-ghost';
   }
 }

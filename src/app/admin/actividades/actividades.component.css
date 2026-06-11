@@ -1,3 +1,6 @@
+:host { display: block; }
+
+/* Tarjetas de "salida" (estados de nodo) — tokenizadas Obsidiana */
 .salidas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -11,25 +14,20 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.2rem;
-  padding: 0.55rem 0.7rem 0.55rem 0.7rem;
-  border: 1.5px solid #dee2e6;
-  border-radius: 8px;
-  background: #fff;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--cre-border-strong);
+  border-radius: var(--cre-radius-sm);
+  background: var(--cre-surface);
   text-align: left;
   cursor: pointer;
-  transition: border-color 0.12s ease, background-color 0.12s ease, transform 0.06s ease;
+  transition: border-color 0.12s var(--cre-ease), background-color 0.12s var(--cre-ease);
   min-height: 92px;
 }
-.salida-card:hover { background: #f8f9fa; }
-.salida-card:active { transform: scale(0.98); }
+.salida-card:hover { background: var(--cre-bg-muted); }
 
 .salida-icon { font-size: 1.05rem; line-height: 1; }
 .salida-label { font-weight: 600; font-size: 0.85rem; }
-.salida-desc {
-  font-size: 0.7rem;
-  color: #6c757d;
-  line-height: 1.15;
-}
+.salida-desc { font-size: 0.7rem; color: var(--cre-text-muted); line-height: 1.15; }
 
 .salida-check {
   position: absolute;
@@ -39,46 +37,46 @@
   font-size: 0.95rem;
 }
 
-/* Estados activos por color */
+/* Estados activos por color semántico */
 .salida-card--active[data-color="success"] {
-  border-color: #198754;
-  background: rgba(25, 135, 84, 0.08);
-  color: #146c43;
+  border-color: var(--cre-success-500);
+  background: color-mix(in srgb, var(--cre-success-500) 10%, var(--cre-surface));
+  color: var(--cre-success-600);
 }
-.salida-card--active[data-color="success"] .salida-check { color: #198754; }
+.salida-card--active[data-color="success"] .salida-check { color: var(--cre-success-500); }
 
 .salida-card--active[data-color="danger"] {
-  border-color: #dc3545;
-  background: rgba(220, 53, 69, 0.08);
-  color: #b02a37;
+  border-color: var(--cre-danger-500);
+  background: color-mix(in srgb, var(--cre-danger-500) 10%, var(--cre-surface));
+  color: var(--cre-danger-500);
 }
-.salida-card--active[data-color="danger"] .salida-check { color: #dc3545; }
+.salida-card--active[data-color="danger"] .salida-check { color: var(--cre-danger-500); }
 
 .salida-card--active[data-color="info"] {
-  border-color: #0dcaf0;
-  background: rgba(13, 202, 240, 0.10);
-  color: #087990;
+  border-color: var(--cre-info-500);
+  background: color-mix(in srgb, var(--cre-info-500) 10%, var(--cre-surface));
+  color: var(--cre-info-500);
 }
-.salida-card--active[data-color="info"] .salida-check { color: #0dcaf0; }
+.salida-card--active[data-color="info"] .salida-check { color: var(--cre-info-500); }
 
 .salida-card--active[data-color="warning"] {
-  border-color: #ffc107;
-  background: rgba(255, 193, 7, 0.12);
-  color: #997404;
+  border-color: var(--cre-warning-500);
+  background: color-mix(in srgb, var(--cre-warning-500) 10%, var(--cre-surface));
+  color: var(--cre-warning-500);
 }
-.salida-card--active[data-color="warning"] .salida-check { color: #d39e00; }
+.salida-card--active[data-color="warning"] .salida-check { color: var(--cre-warning-500); }
 
 .salida-card--active[data-color="secondary"] {
-  border-color: #6c757d;
-  background: rgba(108, 117, 125, 0.10);
-  color: #495057;
+  border-color: var(--cre-border-strong);
+  background: var(--cre-surface-2);
+  color: var(--cre-text-muted);
 }
-.salida-card--active[data-color="secondary"] .salida-check { color: #6c757d; }
+.salida-card--active[data-color="secondary"] .salida-check { color: var(--cre-text-muted); }
 
 /* Badges en la tabla */
 .salida-badge { font-weight: 500; }
-.salida-badge[data-color="success"] { background: #198754; color: #fff; }
-.salida-badge[data-color="danger"] { background: #dc3545; color: #fff; }
-.salida-badge[data-color="info"] { background: #0dcaf0; color: #052c33; }
-.salida-badge[data-color="warning"] { background: #ffc107; color: #2c2200; }
-.salida-badge[data-color="secondary"] { background: #6c757d; color: #fff; }
+.salida-badge[data-color="success"] { background: var(--cre-success-500); color: #fff; }
+.salida-badge[data-color="danger"] { background: var(--cre-danger-500); color: #fff; }
+.salida-badge[data-color="info"] { background: var(--cre-info-500); color: #fff; }
+.salida-badge[data-color="warning"] { background: var(--cre-warning-500); color: #1a1a1a; }
+.salida-badge[data-color="secondary"] { background: var(--cre-text-subtle); color: #fff; }

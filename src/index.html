@@ -5,9 +5,30 @@
     <title>CRE · Gestión de Trámites</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#1554c4" />
+    <meta name="theme-color" content="#fafafa" />
     <meta name="description" content="Sistema de Gestión de Trámites — CRE" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Anti-FOUC: aplica el tema guardado antes del primer paint para evitar
+         el parpadeo blanco→oscuro. Espeja la lógica de ThemeService. -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('cre.theme');
+          var mode =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia &&
+                window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
+          var root = document.documentElement;
+          root.setAttribute('data-theme', mode);
+          root.setAttribute('data-bs-theme', mode);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', mode === 'dark' ? '#0a0a0b' : '#fafafa');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <app-root></app-root>

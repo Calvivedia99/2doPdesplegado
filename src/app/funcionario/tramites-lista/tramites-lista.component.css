@@ -1,0 +1,93 @@
+:host { display: block; }
+
+.tl-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.tl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1rem;
+}
+
+.tl-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 160ms var(--cre-ease);
+}
+.tl-card:hover { border-color: var(--cre-border-strong); }
+
+.tl-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--cre-border);
+}
+.tl-codigo { font-weight: 600; font-size: 0.875rem; color: var(--cre-text); }
+
+.tl-body { padding: 1rem; flex: 1; }
+.tl-politica { margin: 0 0 0.15rem; font-weight: 600; font-size: 0.875rem; color: var(--cre-text); }
+.tl-cliente { margin: 0 0 0.85rem; font-size: 0.8125rem; color: var(--cre-text-muted); }
+
+.tl-progress { margin-bottom: 0.85rem; }
+.tl-progress-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--cre-text-muted);
+  margin-bottom: 0.3rem;
+}
+.tl-bar-track {
+  display: block;
+  height: 6px;
+  background: var(--cre-bg-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.tl-bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--w, 0%);
+  background: var(--cre-accent);
+  border-radius: 999px;
+  transition: width 500ms var(--cre-ease);
+}
+
+.tl-meta {
+  font-size: 0.8125rem;
+  color: var(--cre-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.tl-meta strong { color: var(--cre-text); }
+
+.tl-foot {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--cre-border);
+  background: var(--cre-surface-2);
+}
+
+.tl-empty { grid-column: 1 / -1; }
+
+.tl-skeleton {
+  height: 230px;
+  background: linear-gradient(
+    100deg,
+    var(--cre-surface) 30%,
+    var(--cre-bg-muted) 50%,
+    var(--cre-surface) 70%
+  );
+  background-size: 400px 100%;
+  animation: cre-shimmer 1.4s infinite linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tl-skeleton { animation: none; }
+}

@@ -50,16 +50,12 @@ interface ChatMensaje {
               stroke-linecap="round" />
           </svg>
         } @else {
-          <!-- ícono robot -->
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="4" y="8" width="16" height="11" rx="3" stroke="currentColor"
-              stroke-width="2" />
-            <path d="M12 4v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-            <circle cx="12" cy="4" r="1.4" fill="currentColor" />
-            <circle cx="9" cy="13" r="1.3" fill="currentColor" />
-            <circle cx="15" cy="13" r="1.3" fill="currentColor" />
-            <path d="M2 12v3M22 12v3" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" />
+          <!-- ícono sparkles (asistente IA) -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3l1.8 4.7L18.5 9.5 13.8 11.3 12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3z"
+              fill="currentColor" />
+            <path d="M19 14l.7 1.8 1.8.7-1.8.7L19 19l-.7-1.8-1.8-.7 1.8-.7L19 14z"
+              fill="currentColor" opacity="0.8" />
           </svg>
         }
       </button>
@@ -144,46 +140,47 @@ interface ChatMensaje {
   styles: [
     `
       :host {
-        --ac-morado: #6a1b9a;
-        --ac-morado-700: #571579;
+        --ac-accent: var(--cre-accent);
+        --ac-accent-700: var(--cre-accent-hover);
       }
 
       .ac-fab {
         position: fixed;
         right: 24px;
         bottom: 24px;
-        width: 56px;
-        height: 56px;
+        width: 52px;
+        height: 52px;
         border-radius: 50%;
         border: none;
-        background: var(--ac-morado);
+        background: var(--ac-accent);
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        box-shadow: 0 6px 18px rgba(106, 27, 154, 0.4);
+        box-shadow: 0 8px 22px color-mix(in srgb, var(--ac-accent) 40%, transparent);
         z-index: 1080;
-        transition: background 0.15s ease, transform 0.15s ease;
+        transition: background 0.15s var(--cre-ease), transform 0.15s var(--cre-ease);
       }
       .ac-fab:hover {
-        background: var(--ac-morado-700);
+        background: var(--ac-accent-700);
         transform: translateY(-1px);
       }
 
       .ac-panel {
         position: fixed;
         right: 24px;
-        bottom: 92px;
+        bottom: 88px;
         width: 360px;
         max-width: calc(100vw - 32px);
         height: 480px;
         max-height: calc(100vh - 120px);
         display: flex;
         flex-direction: column;
-        background: #fff;
-        border-radius: 14px;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+        background: var(--cre-surface);
+        border: 1px solid var(--cre-border);
+        border-radius: var(--cre-radius-xl);
+        box-shadow: var(--cre-shadow-lg);
         overflow: hidden;
         z-index: 1080;
       }
@@ -193,7 +190,7 @@ interface ChatMensaje {
         align-items: center;
         justify-content: space-between;
         padding: 12px 16px;
-        background: var(--ac-morado);
+        background: var(--ac-accent);
         color: #fff;
       }
       .ac-panel__title {
@@ -221,7 +218,7 @@ interface ChatMensaje {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        background: #f7f5fa;
+        background: var(--cre-bg-muted);
       }
 
       .ac-row {
@@ -244,34 +241,34 @@ interface ChatMensaje {
         word-break: break-word;
       }
       .ac-bubble--bot {
-        background: #fff;
-        color: #1f2330;
-        border: 1px solid #e6e1ee;
+        background: var(--cre-surface);
+        color: var(--cre-text);
+        border: 1px solid var(--cre-border);
         border-bottom-left-radius: 4px;
       }
       .ac-bubble--user {
-        background: var(--ac-morado);
+        background: var(--ac-accent);
         color: #fff;
         border-bottom-right-radius: 4px;
       }
       .ac-bubble--typing {
-        color: #6b7280;
+        color: var(--cre-text-muted);
         font-style: italic;
       }
 
       .ac-accion {
-        border: 1px solid var(--ac-morado);
-        background: #fff;
-        color: var(--ac-morado);
+        border: 1px solid color-mix(in srgb, var(--ac-accent) 45%, transparent);
+        background: transparent;
+        color: var(--ac-accent);
         font-size: 0.82rem;
         font-weight: 600;
         padding: 5px 12px;
         border-radius: 999px;
         cursor: pointer;
-        transition: background 0.15s ease, color 0.15s ease;
+        transition: background 0.15s var(--cre-ease), color 0.15s var(--cre-ease);
       }
       .ac-accion:hover {
-        background: var(--ac-morado);
+        background: var(--ac-accent);
         color: #fff;
       }
 
@@ -280,15 +277,15 @@ interface ChatMensaje {
         align-items: center;
         gap: 8px;
         padding: 10px 12px;
-        border-top: 1px solid #ece8f2;
-        background: #fff;
+        border-top: 1px solid var(--cre-border);
+        background: var(--cre-surface);
       }
       .ac-panel__input .form-control {
         flex: 1 1 auto;
       }
       .ac-panel__input .form-control:focus {
-        border-color: var(--ac-morado);
-        box-shadow: 0 0 0 0.2rem rgba(106, 27, 154, 0.2);
+        border-color: var(--ac-accent);
+        box-shadow: var(--cre-shadow-glow);
       }
 
       .ac-send {
@@ -296,8 +293,8 @@ interface ChatMensaje {
         width: 40px;
         height: 38px;
         border: none;
-        border-radius: 8px;
-        background: var(--ac-morado);
+        border-radius: var(--cre-radius-sm);
+        background: var(--ac-accent);
         color: #fff;
         display: flex;
         align-items: center;
@@ -305,7 +302,7 @@ interface ChatMensaje {
         cursor: pointer;
       }
       .ac-send:hover:not(:disabled) {
-        background: var(--ac-morado-700);
+        background: var(--ac-accent-700);
       }
       .ac-send:disabled {
         opacity: 0.55;

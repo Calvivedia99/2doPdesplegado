@@ -1,0 +1,72 @@
+:host { display: block; }
+
+.dg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.dg-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 160ms var(--cre-ease);
+}
+.dg-card:hover { border-color: var(--cre-border-strong); }
+
+.dg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--cre-border);
+}
+.dg-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--cre-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dg-body {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.dg-meta { margin: 0; display: flex; flex-direction: column; gap: 0.3rem; }
+.dg-meta > div { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.8125rem; }
+.dg-meta dt { color: var(--cre-text-subtle); margin: 0; }
+.dg-meta dd { margin: 0; color: var(--cre-text); text-align: right; }
+.dg-lanes { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+
+.dg-foot {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--cre-border);
+  background: var(--cre-surface-2);
+}
+.dg-edit { flex: 1; }
+
+.dg-empty { grid-column: 1 / -1; }
+
+.dg-skeleton {
+  height: 200px;
+  background: linear-gradient(
+    100deg,
+    var(--cre-surface) 30%,
+    var(--cre-bg-muted) 50%,
+    var(--cre-surface) 70%
+  );
+  background-size: 400px 100%;
+  animation: cre-shimmer 1.4s infinite linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dg-skeleton { animation: none; }
+}

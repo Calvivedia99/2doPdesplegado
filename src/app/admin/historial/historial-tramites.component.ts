@@ -2,10 +2,15 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 import { ReportesService } from '../../core/services/reportes.service';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
+import { estadoVariant } from '../../shared/ui/estado-visual';
 
 @Component({
   selector: 'app-historial-tramites',
-  imports: [RouterLink],
+  imports: [RouterLink, TableComponent, ColumnTemplateDirective, StatusBadgeComponent],
   templateUrl: './historial-tramites.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -16,6 +21,18 @@ export class HistorialTramitesComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly descargando = signal(false);
+
+  protected readonly estadoVariant = estadoVariant;
+
+  readonly columnas: ColumnDef[] = [
+    { key: 'codigo', label: 'Código', width: '110px' },
+    { key: 'politicaNombre', label: 'Política' },
+    { key: 'estadoActual', label: 'Estado' },
+    { key: 'fechaInicio', label: 'Inicio' },
+    { key: 'fechaCierreReal', label: 'Actualización' },
+    { key: 'clienteNombre', label: 'Cliente' },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'center', width: '90px' },
+  ];
 
   // Filtros
   readonly filtroEstado = signal('');
@@ -105,17 +122,6 @@ export class HistorialTramitesComponent {
 
   setFiltroHasta(ev: Event): void {
     this.filtroHasta.set((ev.target as HTMLInputElement).value);
-  }
-
-  getEstadoBadgeClass(estado: string): string {
-    const mapa: Record<string, string> = {
-      'En curso': 'bg-warning text-dark',
-      'Observado': 'bg-warning text-dark',
-      'Aprobado': 'bg-success',
-      'Rechazado': 'bg-danger',
-      'Cancelado': 'bg-danger',
-    };
-    return mapa[estado] ?? 'bg-secondary';
   }
 
   formatearFecha(iso: string | undefined): string {

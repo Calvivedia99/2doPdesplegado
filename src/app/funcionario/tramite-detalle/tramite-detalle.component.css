@@ -1,0 +1,72 @@
+:host { display: block; }
+
+.td { max-width: 1100px; margin: 0 auto; }
+
+.td-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.td-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--cre-text);
+}
+
+.td-panel { padding: 0; overflow: hidden; }
+.td-panel-head {
+  padding: 0.8rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cre-text);
+  border-bottom: 1px solid var(--cre-border);
+}
+.td-panel-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.td-panel-body { padding: 1rem; }
+.td-panel-body.p-0 { padding: 0; }
+
+.td-info { margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.td-info > div { display: flex; justify-content: space-between; gap: 0.75rem; font-size: 0.8125rem; }
+.td-info dt { margin: 0; color: var(--cre-text-subtle); }
+.td-info dd { margin: 0; color: var(--cre-text); text-align: right; }
+.td-progress { display: flex; align-items: center; gap: 0.5rem; }
+.td-bar-track {
+  display: inline-block;
+  width: 110px;
+  height: 6px;
+  background: var(--cre-bg-muted);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.td-bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--w, 0%);
+  background: var(--cre-accent);
+  border-radius: 999px;
+  transition: width 500ms var(--cre-ease);
+}
+
+.td-historial { list-style: none; margin: 0; padding: 0; }
+.td-hito {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--cre-border);
+  font-size: 0.8125rem;
+}
+.td-hito:last-child { border-bottom: none; }
+.td-hito-obs { display: block; color: var(--cre-text-muted); font-size: 0.78rem; margin-top: 0.15rem; }
+.td-hito-end { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; }
+.td-hito-empty { justify-content: center; color: var(--cre-text-muted); }

@@ -10,6 +10,9 @@ const fallback = {
   apiUrl: '/api',
 };
 
+// El panel de cuentas demo (credenciales del seeder) SOLO debe verse en dev.
+// Por defecto sigue a !production; se puede forzar con DEMO_ACCOUNTS en .env.
+
 function parseEnv(content) {
   const result = {};
 
@@ -54,9 +57,12 @@ const fileEnv = fs.existsSync(envPath)
 
 // Precedencia: variable de entorno del build (Vercel) > archivo .env local > fallback.
 // Así en Vercel basta con definir API_URL en el panel, sin commitear URLs.
+const production = toBoolean(process.env.PRODUCTION ?? fileEnv.PRODUCTION, fallback.production);
+
 const environment = {
-  production: toBoolean(process.env.PRODUCTION ?? fileEnv.PRODUCTION, fallback.production),
+  production,
   apiUrl: process.env.API_URL || fileEnv.API_URL || fallback.apiUrl,
+  demoAccounts: toBoolean(process.env.DEMO_ACCOUNTS ?? fileEnv.DEMO_ACCOUNTS, !production),
 };
 
 const output = `export const environment = ${JSON.stringify(environment, null, 2)};\n`;

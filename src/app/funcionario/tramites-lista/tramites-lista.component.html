@@ -1,23 +1,22 @@
-<section class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h4 mb-0">Tramites Activos</h1>
-    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="cargar()">Actualizar</button>
-  </div>
+<section>
+  <app-page-header
+    eyebrow="Funcionario"
+    title="Trámites activos"
+    description="Trámites en curso bajo tu gestión."
+  >
+    <button header-actions class="oi-btn oi-btn-secondary oi-btn-sm" type="button" (click)="cargar()">Actualizar</button>
+  </app-page-header>
 
   @if (error()) {
-    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
   }
 
-  <div class="mb-3 d-flex gap-2 flex-wrap">
+  <div class="tl-filtros">
     <button
       type="button"
-      class="btn btn-sm"
-      [class.btn-primary]="!filtroEstado()"
-      [class.btn-outline-secondary]="!!filtroEstado()"
+      [class]="!filtroEstado() ? 'oi-btn oi-btn-sm oi-btn-secondary' : 'oi-btn oi-btn-sm oi-btn-ghost'"
       (click)="setFiltroEstado('')"
-    >
-      Todos
-    </button>
+    >Todos</button>
     @for (estado of estados; track estado) {
       <button type="button" [class]="getFiltroButtonClass(estado)" (click)="setFiltroEstado(estado)">
         {{ estado }}
@@ -26,49 +25,45 @@
   </div>
 
   @if (loading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" aria-hidden="true"></div>
+    <div class="tl-grid">
+      @for (i of [0,1,2]; track i) { <div class="oi-card tl-skeleton"></div> }
     </div>
   } @else {
-    <div class="row g-3">
+    <div class="tl-grid">
       @for (tramite of tramitesFiltrados(); track tramite.id) {
-        <div class="col-md-6 col-xl-4">
-          <article class="card h-100 shadow-sm border-0">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span class="fw-bold">{{ tramite.codigo }}</span>
-              <span [class]="'badge ' + getEstadoBadgeClass(tramite.estado)">{{ tramite.estado }}</span>
-            </div>
-            <div class="card-body">
-              <p class="mb-1 fw-semibold">{{ tramite.politicaNombre ?? 'Tramite' }}</p>
-              <p class="small text-muted mb-2">Cliente: {{ tramite.clienteNombre ?? '—' }}</p>
+        <article class="oi-card tl-card">
+          <header class="tl-head">
+            <span class="tl-codigo oi-mono">{{ tramite.codigo }}</span>
+            <app-status-badge [variant]="estadoVariant(tramite.estado)" [dot]="true">{{ tramite.estado }}</app-status-badge>
+          </header>
+          <div class="tl-body">
+            <p class="tl-politica">{{ tramite.politicaNombre ?? 'Trámite' }}</p>
+            <p class="tl-cliente">Cliente: {{ tramite.clienteNombre ?? '—' }}</p>
 
-              <div class="mb-2">
-                <div class="d-flex justify-content-between small mb-1">
-                  <span>Progreso</span>
-                  <span>{{ tramite.progreso }}%</span>
-                </div>
-                <div class="progress" style="height: 6px">
-                  <div class="progress-bar bg-primary" [style.width.%]="tramite.progreso"></div>
-                </div>
+            <div class="tl-progress">
+              <div class="tl-progress-row">
+                <span>Progreso</span>
+                <span class="oi-mono">{{ tramite.progreso }}%</span>
               </div>
+              <span class="tl-bar-track"><span class="tl-bar-fill" [style.--w]="tramite.progreso + '%'"></span></span>
+            </div>
 
-              <div class="small text-muted">
-                Prioridad: <strong>{{ getPrioridadLabel(tramite.prioridad) }}</strong><br />
-                @if (tramite.nodoActualNombre) {
-                  <span>Nodo actual: <em>{{ tramite.nodoActualNombre }}</em></span>
-                }
-              </div>
+            <div class="tl-meta">
+              <span>Prioridad: <strong>{{ getPrioridadLabel(tramite.prioridad) }}</strong></span>
+              @if (tramite.nodoActualNombre) {
+                <span>Nodo actual: <em>{{ tramite.nodoActualNombre }}</em></span>
+              }
             </div>
-            <div class="card-footer">
-              <a [routerLink]="['/funcionario/tramites', tramite.id]" class="btn btn-primary btn-sm w-100">
-                Ver detalle y procesar
-              </a>
-            </div>
-          </article>
-        </div>
+          </div>
+          <footer class="tl-foot">
+            <a [routerLink]="['/funcionario/tramites', tramite.id]" class="oi-btn oi-btn-primary oi-btn-sm w-100">
+              Ver detalle y procesar
+            </a>
+          </footer>
+        </article>
       } @empty {
-        <div class="col-12">
-          <div class="text-center text-muted py-5">No hay tramites en este estado</div>
+        <div class="tl-empty">
+          <app-empty-state title="Sin trámites" description="No hay trámites en este estado." />
         </div>
       }
     </div>

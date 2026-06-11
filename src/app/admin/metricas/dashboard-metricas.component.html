@@ -1,10 +1,7 @@
-<section class="container-fluid py-4">
+<section>
 
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-      <h1 class="h4 mb-0">Tablero de Rendimiento</h1>
-      <p class="text-muted small mb-0">Métricas de tiempos y alertas de cuellos de botella del workflow.</p>
-    </div>
+    <p class="text-muted small mb-0">Métricas de tiempos y alertas de cuellos de botella del workflow.</p>
     <button class="btn btn-sm btn-outline-secondary" type="button" (click)="cargarCuellos()">
       Actualizar
     </button>
@@ -23,38 +20,23 @@
 
     <!-- CU-25: Alertas de cuellos de botella -->
     @if (cuellosDeBotella().length > 0) {
-      <div class="card border-danger shadow-sm mb-4">
-        <div class="card-header bg-danger text-white d-flex align-items-center gap-2">
-          <strong>Alertas — Cuellos de Botella Detectados ({{ cuellosDeBotella().length }})</strong>
-        </div>
-        <div class="card-body bg-light">
-          <div class="row g-3">
-            @for (cb of cuellosDeBotella(); track cb.id) {
-              <div class="col-md-6">
-                <div class="card h-100 border-warning shadow-sm">
-                  <div class="card-body">
-                    <h6 class="card-title text-danger mb-2">Actividad: {{ getNombreActividad(cb.actividadId) }}</h6>
-                    <p class="small mb-1">
-                      <strong>Departamento:</strong> {{ getNombreDepartamento(cb.departamentoId) }}
-                    </p>
-                    <p class="small mb-1">
-                      <strong>Trámites afectados:</strong> {{ cb.tramitesAcumulados }}
-                    </p>
-                    <p class="small mb-2">
-                      Tiempo promedio sobrepasa el SLA en
-                      <strong class="text-danger">{{ cb.desviacionPorcentaje | number:'1.1-1' }}%</strong>.
-                    </p>
-                    @if (cb.causaSugerida) {
-                      <p class="small text-muted fst-italic mb-0">{{ cb.causaSugerida }}</p>
-                    }
-                  </div>
-                  <div class="card-footer bg-white border-0 pt-0">
-                    <small class="text-muted">Detectado: {{ cb.fechaDeteccion | date:'dd/MM/yyyy HH:mm' }}</small>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
+      <div class="mb-4">
+        <h2 class="oi-eyebrow mb-2">Cuellos de botella detectados ({{ cuellosDeBotella().length }})</h2>
+        <div class="mt-grid">
+          @for (cb of cuellosDeBotella(); track cb.id) {
+            <article class="oi-card mt-cuello">
+              <h6 class="mt-cuello-title">{{ getNombreActividad(cb.actividadId) }}</h6>
+              <dl class="mt-cuello-meta">
+                <div><dt>Departamento</dt><dd>{{ getNombreDepartamento(cb.departamentoId) }}</dd></div>
+                <div><dt>Trámites afectados</dt><dd class="oi-mono">{{ cb.tramitesAcumulados }}</dd></div>
+                <div><dt>Desviación SLA</dt><dd class="mt-desv oi-mono">+{{ cb.desviacionPorcentaje | number:'1.1-1' }}%</dd></div>
+              </dl>
+              @if (cb.causaSugerida) {
+                <p class="mt-cuello-causa">{{ cb.causaSugerida }}</p>
+              }
+              <span class="mt-cuello-fecha oi-mono">{{ cb.fechaDeteccion | date:'dd/MM/yyyy HH:mm' }}</span>
+            </article>
+          }
         </div>
       </div>
     } @else {
@@ -64,22 +46,20 @@
     }
 
     <!-- CU-24: Buscar métricas por trámite -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header">
-        <strong>Métricas por Trámite (CU-24)</strong>
-      </div>
-      <div class="card-body">
+    <div class="oi-card mt-search">
+      <header class="mt-search-head">Métricas por trámite (CU-24)</header>
+      <div class="mt-search-body">
         <div class="d-flex gap-2 mb-3">
           <input
             type="text"
-            class="form-control"
-            placeholder="ID del trámite..."
+            class="oi-input"
+            placeholder="ID del trámite…"
             [value]="tramiteIdBusqueda()"
             (input)="setTramiteIdBusqueda($event)"
           />
           <button
             type="button"
-            class="btn btn-primary"
+            class="oi-btn oi-btn-primary oi-btn-sm"
             [disabled]="!tramiteIdBusqueda()"
             (click)="buscarMetricasTramite()"
           >
@@ -88,36 +68,29 @@
         </div>
 
         @if (metricas().length > 0) {
-          <div class="table-responsive">
-            <table class="table table-hover table-sm align-middle mb-0">
-              <thead class="table-dark">
-                <tr>
-                  <th>Actividad</th>
-                  <th>Departamento</th>
-                  <th>Tiempo Real (h)</th>
-                  <th>Estatus SLA</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (m of metricas(); track m.actividadId) {
-                  <tr>
-                    <td><strong>{{ getNombreActividad(m.actividadId) }}</strong></td>
-                    <td>{{ getNombreDepartamento(m.departamentoId) }}</td>
-                    <td>{{ formatearHoras(m.tiempoSegundos) }} h</td>
-                    <td>
-                      @if (m.superoSla) {
-                        <span class="badge bg-danger">SLA Excedido</span>
-                      } @else {
-                        <span class="badge bg-success">Dentro del SLA</span>
-                      }
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+          <app-table
+            [columns]="columnasMetricas"
+            [data]="$any(metricas())"
+            [searchable]="false"
+            [pageSize]="25"
+          >
+            <ng-template appColumn="actividadId" let-row>
+              <span class="fw-medium">{{ getNombreActividad(row.actividadId) }}</span>
+            </ng-template>
+            <ng-template appColumn="departamentoId" let-row>
+              {{ getNombreDepartamento(row.departamentoId) }}
+            </ng-template>
+            <ng-template appColumn="tiempoSegundos" let-row>
+              <span class="oi-mono">{{ formatearHoras(row.tiempoSegundos) }} h</span>
+            </ng-template>
+            <ng-template appColumn="superoSla" let-row>
+              <app-status-badge [variant]="row.superoSla ? 'danger' : 'success'" [dot]="true">
+                {{ row.superoSla ? 'SLA excedido' : 'Dentro del SLA' }}
+              </app-status-badge>
+            </ng-template>
+          </app-table>
         } @else {
-          <p class="text-muted small mb-0">Ingrese un ID de trámite para ver sus métricas de tiempo.</p>
+          <p class="text-muted small mb-0">Ingresa un ID de trámite para ver sus métricas de tiempo.</p>
         }
       </div>
     </div>

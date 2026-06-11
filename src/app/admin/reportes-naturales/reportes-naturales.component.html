@@ -1,12 +1,7 @@
-<section class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <h1 class="h4 mb-0">Reportes ad-hoc</h1>
-      <p class="text-muted small mb-0">
-        CU-41 — escribe la consulta en lenguaje natural y la IA genera el reporte.
-      </p>
-    </div>
-  </div>
+<section>
+  <p class="text-muted small mb-3">
+    CU-41 — escribe la consulta en lenguaje natural y la IA genera el reporte.
+  </p>
 
   <!-- Caja de consulta -->
   <div class="card border-0 shadow-sm mb-3">
@@ -98,14 +93,12 @@
       <!-- Gráfico (reportes de conteo/agrupación) -->
       @if (esConteo() && chart().length) {
         <div class="card-body border-bottom">
-          <h2 class="h6 text-muted mb-3">Gráfico</h2>
+          <h2 class="oi-eyebrow mb-3">Gráfico</h2>
           @for (b of chart(); track b.label) {
-            <div class="d-flex align-items-center mb-2">
-              <div class="text-truncate me-2" style="width: 30%;" [title]="b.label">{{ b.label }}</div>
-              <div class="flex-grow-1 bg-light rounded" style="height: 1.25rem;">
-                <div class="bg-primary rounded" [style.width.%]="b.pct" style="height: 100%;"></div>
-              </div>
-              <div class="ms-2 small fw-semibold" style="width: 3rem; text-align: right;">{{ b.value }}</div>
+            <div class="rn-bar-row">
+              <span class="rn-bar-label" [title]="b.label">{{ b.label }}</span>
+              <span class="rn-bar-track"><span class="rn-bar-fill" [style.--w]="b.pct + '%'"></span></span>
+              <span class="rn-bar-val oi-mono">{{ b.value }}</span>
             </div>
           }
         </div>

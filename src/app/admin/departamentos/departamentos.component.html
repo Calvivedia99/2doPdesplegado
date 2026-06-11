@@ -1,6 +1,4 @@
-<section class="container-fluid py-4">
-  <h1 class="h4 mb-4">Departamentos</h1>
-
+<section>
   @if (exito()) {
     <div class="alert alert-success" role="alert">{{ exito() }}</div>
   }
@@ -54,53 +52,32 @@
     </div>
 
     <div class="col-md-8">
-      <div class="card shadow-sm border-0">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0 align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Codigo</th>
-                <th>Nombre</th>
-                <th>Descripcion</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (departamento of departamentos(); track departamento.id) {
-                <tr>
-                  <td><span class="badge bg-secondary">{{ departamento.codigo }}</span></td>
-                  <td>{{ departamento.nombre }}</td>
-                  <td class="text-muted small">{{ departamento.descripcion }}</td>
-                  <td>
-                    <span
-                      class="badge"
-                      [class.bg-success]="departamento.activo"
-                      [class.bg-secondary]="!departamento.activo"
-                    >
-                      {{ departamento.activo ? 'Activo' : 'Inactivo' }}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="btn-group btn-group-sm">
-                      <button type="button" class="btn btn-outline-secondary" (click)="editar(departamento)">
-                        Editar
-                      </button>
-                      <button type="button" class="btn btn-outline-danger" (click)="eliminar(departamento.id)">
-                        Eliminar
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="5" class="text-center text-muted py-4">Sin departamentos registrados</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <app-table
+        [columns]="columnas"
+        [data]="$any(departamentos())"
+        searchPlaceholder="Buscar departamento…"
+        [pageSize]="25"
+        emptyTitle="Sin departamentos registrados"
+        emptyDescription="Crea el primer departamento con el formulario."
+      >
+        <ng-template appColumn="codigo" let-row>
+          <span class="oi-badge oi-badge-neutral oi-mono">{{ row.codigo }}</span>
+        </ng-template>
+        <ng-template appColumn="descripcion" let-row>
+          <span class="text-muted">{{ row.descripcion }}</span>
+        </ng-template>
+        <ng-template appColumn="activo" let-row>
+          <app-status-badge [variant]="row.activo ? 'success' : 'neutral'" [dot]="true">
+            {{ row.activo ? 'Activo' : 'Inactivo' }}
+          </app-status-badge>
+        </ng-template>
+        <ng-template appColumn="acciones" let-row>
+          <div class="oi-row-actions">
+            <button type="button" class="oi-btn oi-btn-secondary oi-btn-sm" (click)="editar(row)">Editar</button>
+            <button type="button" class="oi-btn oi-btn-danger-outline oi-btn-sm" (click)="eliminar(row.id)">Eliminar</button>
+          </div>
+        </ng-template>
+      </app-table>
     </div>
   </div>
 </section>

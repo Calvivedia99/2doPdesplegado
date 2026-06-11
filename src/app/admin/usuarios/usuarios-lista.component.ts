@@ -5,10 +5,14 @@ import { RolService } from '../../core/services/rol.service';
 import { Usuario } from '../../core/models/usuario.model';
 import { Rol } from '../../core/models/rol.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-usuarios-lista',
-  imports: [RouterLink],
+  imports: [RouterLink, TableComponent, ColumnTemplateDirective, StatusBadgeComponent],
   templateUrl: './usuarios-lista.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -21,6 +25,15 @@ export class UsuariosListaComponent {
   readonly loading = signal(false);
   readonly error = signal('');
   readonly exito = signal('');
+
+  readonly columnas: ColumnDef[] = [
+    { key: 'nombre', label: 'Nombre' },
+    { key: 'email', label: 'Email' },
+    { key: 'rolId', label: 'Rol', sortable: false },
+    { key: 'tipo', label: 'Tipo' },
+    { key: 'activo', label: 'Estado', sortable: false },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'right' },
+  ];
 
   constructor() {
     this.cargarDatos();

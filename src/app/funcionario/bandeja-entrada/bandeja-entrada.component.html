@@ -1,47 +1,38 @@
-<section class="container-fluid py-4">
-  <!-- Cabecera con título + contador de riesgo + acciones -->
-  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <div>
-      <h1 class="h4 mb-0">Bandeja de Entrada</h1>
-      <p class="text-muted small mb-0">Trámites pendientes de su revisión según el Workflow.</p>
-    </div>
-    <div class="d-flex align-items-center gap-3 flex-wrap">
+<section>
+  <app-page-header
+    eyebrow="Funcionario"
+    title="Bandeja de entrada"
+    description="Trámites pendientes de tu revisión según el workflow."
+  >
+    <div header-actions class="d-flex align-items-center gap-2 flex-wrap">
       @if (riesgoDisponible() && contadorAltos() > 0) {
-        <div class="alert alert-danger py-1 px-3 mb-0 small">
-          <strong>{{ contadorAltos() }}</strong>
-          @if (contadorAltos() === 1) { trámite en riesgo alto }
-          @else { trámites en riesgo alto }
-        </div>
+        <app-status-badge variant="danger" [dot]="true">
+          {{ contadorAltos() }} en riesgo alto
+        </app-status-badge>
       }
 
       <!-- CU-44: toggle de orden -->
-      <div class="btn-group btn-group-sm" role="group" aria-label="Ordenar por">
+      <div class="oi-seg" role="group" aria-label="Ordenar por">
         <button
           type="button"
-          class="btn"
-          [class.btn-primary]="orden() === 'fecha'"
-          [class.btn-outline-primary]="orden() !== 'fecha'"
+          class="oi-seg-btn"
+          [class.active]="orden() === 'fecha'"
           (click)="cambiarOrden('fecha')"
-        >
-          Por fecha
-        </button>
+        >Por fecha</button>
         <button
           type="button"
-          class="btn"
-          [class.btn-primary]="orden() === 'ia'"
-          [class.btn-outline-primary]="orden() !== 'ia'"
+          class="oi-seg-btn"
+          [class.active]="orden() === 'ia'"
           (click)="cambiarOrden('ia')"
           title="Ordenar por prioridad recomendada por la IA (CU-44)"
         >
-          Por IA ✨
+          <lucide-icon [img]="sparklesIcon" [size]="13"></lucide-icon> Por IA
         </button>
       </div>
 
-      <button class="btn btn-sm btn-outline-secondary" type="button" (click)="cargar()">
-        Actualizar
-      </button>
+      <button class="oi-btn oi-btn-secondary oi-btn-sm" type="button" (click)="cargar()">Actualizar</button>
     </div>
-  </div>
+  </app-page-header>
 
   @if (avisoIa()) {
     <div class="alert alert-warning small py-2">{{ avisoIa() }}</div>
@@ -50,65 +41,41 @@
     <div class="alert alert-danger" role="alert">{{ error() }}</div>
   }
 
-  @if (loading()) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" aria-hidden="true"></div>
-    </div>
-  } @else {
-    @if (tramites().length === 0) {
-      <div class="text-center text-muted py-5">
-        <p class="mb-0">No tiene trámites asignados en este momento.</p>
-      </div>
-    } @else {
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>Código</th>
-              <th>Política</th>
-              <th>Estado</th>
-              <th>Recibido</th>
-              <th class="text-center" title="CU-43 — predicción de SLA">Riesgo</th>
-              <th class="text-center">Prioridad</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (tramite of tramites(); track tramite.id) {
-              <tr [title]="tooltipRiesgo(tramite)">
-                <td><strong>{{ tramite.codigo }}</strong></td>
-                <td>{{ tramite.politicaNombre ?? '—' }}</td>
-                <td>
-                  <span class="badge bg-warning text-dark">
-                    {{ tramite.estadoActual ?? tramite.estado }}
-                  </span>
-                </td>
-                <td class="small">{{ formatearFecha(tramite.fechaInicio) }}</td>
-                <td class="text-center">
-                  @if (riesgoDisponible()) {
-                    <app-chip-riesgo
-                      [nivel]="tramite.riesgoDemora ?? 'desconocido'"
-                      [probSla]="tramite.probSuperarSla"
-                    />
-                  } @else {
-                    <span class="text-muted small">—</span>
-                  }
-                </td>
-                <td class="text-center">{{ tramite.prioridad ?? '—' }}</td>
-                <td>
-                  <button
-                    class="btn btn-primary btn-sm"
-                    type="button"
-                    (click)="verExpediente(tramite.id)"
-                  >
-                    Revisar
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    }
-  }
+  <app-table
+    [columns]="columnas"
+    [data]="$any(tramites())"
+    [loading]="loading()"
+    searchPlaceholder="Buscar por código o política…"
+    [pageSize]="25"
+    emptyTitle="Bandeja vacía"
+    emptyDescription="No tienes trámites asignados en este momento."
+  >
+    <ng-template appColumn="codigo" let-row>
+      <span class="oi-mono fw-medium">{{ row.codigo }}</span>
+    </ng-template>
+    <ng-template appColumn="politicaNombre" let-row>
+      {{ row.politicaNombre ?? '—' }}
+    </ng-template>
+    <ng-template appColumn="estado" let-row>
+      <app-status-badge [variant]="estadoVariant(row.estadoActual ?? row.estado)" [dot]="true">
+        {{ row.estadoActual ?? row.estado }}
+      </app-status-badge>
+    </ng-template>
+    <ng-template appColumn="fechaInicio" let-row>
+      <span class="oi-mono text-muted">{{ formatearFecha(row.fechaInicio) }}</span>
+    </ng-template>
+    <ng-template appColumn="riesgo" let-row>
+      @if (riesgoDisponible()) {
+        <app-chip-riesgo [nivel]="row.riesgoDemora ?? 'desconocido'" [probSla]="row.probSuperarSla" />
+      } @else {
+        <span class="text-muted small">—</span>
+      }
+    </ng-template>
+    <ng-template appColumn="prioridad" let-row>
+      <span class="oi-mono">{{ row.prioridad ?? '—' }}</span>
+    </ng-template>
+    <ng-template appColumn="acciones" let-row>
+      <button class="oi-btn oi-btn-primary oi-btn-sm" type="button" (click)="verExpediente(row.id)">Revisar</button>
+    </ng-template>
+  </app-table>
 </section>

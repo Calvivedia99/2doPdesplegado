@@ -1,6 +1,8 @@
-<section class="container py-4" style="max-width: 720px;">
+<section class="sp">
   <div class="mb-3">
-    <h1 class="h4 mb-1">Iniciar trámite con IA ✨</h1>
+    <h1 class="sp-title">
+      <lucide-icon [img]="sparklesIcon" [size]="20"></lucide-icon> Iniciar trámite con IA
+    </h1>
     <p class="text-muted small mb-0">
       CU-40 — describe lo que necesitas en tus propias palabras y la IA te sugerirá la política correcta.
     </p>
@@ -8,8 +10,8 @@
 
   <!-- Paso 1: descripción -->
   @if (!sugerencia() && !feedbackFinal()) {
-    <div class="card border-0 shadow-sm">
-      <div class="card-body">
+    <div class="oi-card">
+      <div class="sp-card-body">
         <label for="desc" class="form-label fw-semibold">¿Qué necesitas hacer?</label>
         <textarea
           id="desc"
@@ -41,7 +43,7 @@
         <div class="d-flex justify-content-end mt-3">
           <button
             type="button"
-            class="btn btn-primary"
+            class="oi-btn oi-btn-primary oi-btn-sm"
             (click)="sugerir()"
             [disabled]="procesando() || !descripcion().trim()"
           >
@@ -60,13 +62,11 @@
   <!-- Paso 2: ver sugerencia y elegir -->
   @if (sugerencia(); as s) {
     @if (!feedbackFinal()) {
-      <div class="card border-0 shadow-sm">
-        <div class="card-body">
-          <h2 class="h6 mb-3">
+      <div class="oi-card">
+        <div class="sp-card-body">
+          <h2 class="sp-h2">
             Política sugerida
-            <span class="badge bg-primary ms-2">
-              {{ (s.confianza * 100) | number: '1.0-0' }}% confianza
-            </span>
+            <app-status-badge variant="brand">{{ (s.confianza * 100) | number: '1.0-0' }}% confianza</app-status-badge>
           </h2>
 
           @if (error()) {
@@ -94,12 +94,12 @@
                   />
                   <strong>{{ c.nombre }}</strong>
                   @if (c.politicaId === s.politicaSugeridaId) {
-                    <span class="badge bg-info text-dark ms-2 small">sugerida</span>
+                    <app-status-badge variant="info">sugerida</app-status-badge>
                   }
                 </div>
-                <span class="badge {{ badgeConfianza(c.confianza) }}">
+                <app-status-badge [variant]="varianteConfianza(c.confianza)">
                   {{ (c.confianza * 100) | number: '1.0-0' }}%
-                </span>
+                </app-status-badge>
               </label>
             }
           </div>
@@ -107,7 +107,7 @@
           <div class="d-flex justify-content-between gap-2">
             <button
               type="button"
-              class="btn btn-outline-secondary"
+              class="oi-btn oi-btn-secondary oi-btn-sm"
               (click)="cancelar()"
               [disabled]="confirmando()"
             >
@@ -115,7 +115,7 @@
             </button>
             <button
               type="button"
-              class="btn btn-success"
+              class="oi-btn oi-btn-primary oi-btn-sm"
               (click)="confirmar()"
               [disabled]="confirmando() || !puedeConfirmar()"
             >
@@ -136,25 +136,23 @@
 
   <!-- Paso 3: confirmación -->
   @if (feedbackFinal(); as fb) {
-    <div class="card border-0 shadow-sm text-center">
-      <div class="card-body py-5">
-        @if (fb === 'ACEPTADA') {
-          <div class="display-3 mb-2">✅</div>
-          <h2 class="h5">Sugerencia aceptada</h2>
-          <p class="text-muted">El feedback ayuda a entrenar el modelo IA.</p>
-        } @else if (fb === 'CAMBIADA') {
-          <div class="display-3 mb-2">↪️</div>
-          <h2 class="h5">Cambio registrado</h2>
-          <p class="text-muted">Tu elección queda guardada para mejorar futuras sugerencias.</p>
-        } @else {
-          <div class="display-3 mb-2">✋</div>
-          <h2 class="h5">Sugerencia cancelada</h2>
-          <p class="text-muted">No se procesó ningún trámite.</p>
-        }
-        <button type="button" class="btn btn-primary" (click)="reset()">
-          Hacer otra consulta
-        </button>
-      </div>
+    <div class="oi-card sp-final">
+      @if (fb === 'ACEPTADA') {
+        <span class="sp-final-icon ok"><lucide-icon [img]="aceptadaIcon" [size]="28"></lucide-icon></span>
+        <h2 class="sp-final-title">Sugerencia aceptada</h2>
+        <p class="text-muted">El feedback ayuda a entrenar el modelo IA.</p>
+      } @else if (fb === 'CAMBIADA') {
+        <span class="sp-final-icon info"><lucide-icon [img]="cambiadaIcon" [size]="28"></lucide-icon></span>
+        <h2 class="sp-final-title">Cambio registrado</h2>
+        <p class="text-muted">Tu elección queda guardada para mejorar futuras sugerencias.</p>
+      } @else {
+        <span class="sp-final-icon neutral"><lucide-icon [img]="canceladaIcon" [size]="28"></lucide-icon></span>
+        <h2 class="sp-final-title">Sugerencia cancelada</h2>
+        <p class="text-muted">No se procesó ningún trámite.</p>
+      }
+      <button type="button" class="oi-btn oi-btn-primary oi-btn-sm" (click)="reset()">
+        Hacer otra consulta
+      </button>
     </div>
   }
 </section>

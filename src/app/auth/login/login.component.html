@@ -1,76 +1,87 @@
-<div class="login-page d-flex align-items-center py-4">
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-10 col-md-6 col-lg-4">
-        <div class="text-center mb-4">
-          <h1 class="h3 fw-bold text-primary mb-2">CRE · Gestion de Tramites</h1>
-          <p class="text-body-secondary mb-0">Portal interno para Administradores y Funcionarios</p>
-        </div>
-
-        <div class="card shadow-sm border-0">
-          <div class="card-body p-4">
-            <h2 class="h5 mb-4">Iniciar Sesion</h2>
-
-            @if (error()) {
-              <div class="alert alert-danger" role="alert">{{ error() }}</div>
-            }
-
-            <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-              <div class="mb-3">
-                <label for="email" class="form-label">Correo electronico</label>
-                <input
-                  id="email"
-                  type="email"
-                  class="form-control"
-                  formControlName="email"
-                  [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
-                />
-                <div class="invalid-feedback">Email requerido o invalido.</div>
-              </div>
-
-              <div class="mb-3">
-                <label for="password" class="form-label">Contrasena</label>
-                <input
-                  id="password"
-                  type="password"
-                  class="form-control"
-                  formControlName="password"
-                  [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
-                />
-                <div class="invalid-feedback">Contrasena requerida (minimo 6 caracteres).</div>
-              </div>
-
-              <button type="submit" class="btn btn-primary w-100" [disabled]="loading()">
-                @if (loading()) {
-                  <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
-                }
-                {{ loading() ? 'Autenticando...' : 'Ingresar' }}
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div class="card mt-3 border-info-subtle">
-          <div class="card-body p-3 small">
-            <strong class="d-block mb-2">Acceso rapido (demo):</strong>
-            <div class="d-flex flex-wrap gap-1">
-              @for (c of cuentasDemo; track c.email) {
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-{{ c.variant }}"
-                  (click)="llenarDemo(c)"
-                  [title]="c.email + ' / ' + c.password"
-                >
-                  {{ c.label }}
-                </button>
-              }
-            </div>
-            <small class="text-body-secondary d-block mt-2">
-              Click para autocompletar el formulario, luego pulsa "Ingresar".
-            </small>
-          </div>
-        </div>
-      </div>
+<div class="oi-login">
+  <!-- Panel de marca (izquierda, oscuro con glow iris) -->
+  <aside class="oi-login-brand">
+    <div class="oi-login-glow" aria-hidden="true"></div>
+    <div class="oi-login-brand-inner">
+      <span class="oi-login-mark">CRE</span>
+      <h1 class="oi-login-tagline">Gestión de Trámites</h1>
+      <p class="oi-login-lead">
+        Consola interna para administradores y funcionarios. Flujos,
+        expedientes y colaboración en tiempo real, en un solo lugar.
+      </p>
     </div>
-  </div>
+    <footer class="oi-login-foot oi-eyebrow">Comisión Reguladora · Acceso interno</footer>
+  </aside>
+
+  <!-- Formulario (derecha) -->
+  <main class="oi-login-panel">
+    <div class="oi-login-card">
+      <header class="oi-login-head">
+        <span class="oi-login-mark-sm">CRE</span>
+        <h2 class="oi-login-title">Iniciar sesión</h2>
+        <p class="oi-login-subtitle">Ingresa con tu cuenta institucional</p>
+      </header>
+
+      @if (error()) {
+        <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="oi-field">
+          <label for="email" class="oi-label">Correo electrónico</label>
+          <input
+            id="email"
+            type="email"
+            class="oi-input"
+            formControlName="email"
+            autocomplete="email"
+            [class.is-invalid]="form.controls.email.touched && form.controls.email.invalid"
+          />
+          @if (form.controls.email.touched && form.controls.email.invalid) {
+            <span class="oi-field-error">Ingresa un correo electrónico válido.</span>
+          }
+        </div>
+
+        <div class="oi-field">
+          <label for="password" class="oi-label">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            class="oi-input"
+            formControlName="password"
+            autocomplete="current-password"
+            [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <span class="oi-field-error">La contraseña debe tener al menos 6 caracteres.</span>
+          }
+        </div>
+
+        <button type="submit" class="oi-btn oi-btn-primary oi-login-submit" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          }
+          {{ loading() ? 'Autenticando…' : 'Ingresar' }}
+        </button>
+      </form>
+
+      @if (mostrarDemo) {
+        <div class="oi-login-demo">
+          <span class="oi-eyebrow">Acceso rápido · demo</span>
+          <div class="oi-login-demo-chips">
+            @for (c of cuentasDemo; track c.email) {
+              <button
+                type="button"
+                class="oi-btn oi-btn-secondary oi-btn-sm"
+                (click)="llenarDemo(c)"
+                [title]="c.email + ' / ' + c.password"
+              >
+                {{ c.label }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </main>
 </div>

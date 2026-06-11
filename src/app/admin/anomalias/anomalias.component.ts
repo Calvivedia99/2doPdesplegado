@@ -1,8 +1,11 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { LucideAngularModule, LucideIconData, RefreshCw, Sparkles } from 'lucide-angular';
 import { AlertaAnomalia } from '../../core/models/alerta-anomalia.model';
 import { AlertaAnomaliaService } from '../../core/services/alerta-anomalia.service';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { StatusBadgeComponent, StatusVariant } from '../../shared/ui/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 
 /**
  * CU-45 — Panel administrador para revisar las anomalías detectadas por IA.
@@ -14,13 +17,16 @@ import { mensajeAmigable } from '../../core/utils/error-messages';
  */
 @Component({
   selector: 'app-anomalias',
-  imports: [DatePipe, DecimalPipe],
+  imports: [DatePipe, DecimalPipe, LucideAngularModule, StatusBadgeComponent, EmptyStateComponent],
   templateUrl: './anomalias.component.html',
   styleUrl: './anomalias.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AnomaliasComponent {
   private readonly svc = inject(AlertaAnomaliaService);
+
+  protected readonly refreshIcon = RefreshCw as LucideIconData;
+  protected readonly sparklesIcon = Sparkles as LucideIconData;
 
   readonly anomalias = signal<AlertaAnomalia[]>([]);
   readonly loading = signal(false);
@@ -122,14 +128,13 @@ export class AnomaliasComponent {
     this.filtroCategoria.set(cat);
   }
 
-  /** Color del badge según categoría. */
-  badgeCategoria(cat: string): string {
+  /** Variante semántica del badge según categoría. */
+  varianteCategoria(cat: string): StatusVariant {
     switch ((cat || '').toLowerCase()) {
-      case 'tiempo_atipico':       return 'bg-warning text-dark';
-      case 'secuencia_inusual':    return 'bg-info text-dark';
-      case 'loop_derivaciones':    return 'bg-danger';
-      case 'salto_no_autorizado':  return 'bg-dark';
-      default:                     return 'bg-secondary';
+      case 'tiempo_atipico':       return 'warning';
+      case 'secuencia_inusual':    return 'info';
+      case 'loop_derivaciones':    return 'danger';
+      default:                     return 'neutral';
     }
   }
 

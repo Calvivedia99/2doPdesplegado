@@ -6,14 +6,25 @@ import { ActividadService } from '../../core/services/actividad.service';
 import { Departamento } from '../../core/models/departamento.model';
 import { Actividad } from '../../core/models/actividad.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-dashboard-metricas',
-  imports: [DatePipe, DecimalPipe],
+  imports: [DatePipe, DecimalPipe, TableComponent, ColumnTemplateDirective, StatusBadgeComponent],
   templateUrl: './dashboard-metricas.component.html',
+  styleUrl: './dashboard-metricas.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardMetricasComponent {
+  readonly columnasMetricas: ColumnDef[] = [
+    { key: 'actividadId', label: 'Actividad' },
+    { key: 'departamentoId', label: 'Departamento', sortable: false },
+    { key: 'tiempoSegundos', label: 'Tiempo real (h)', align: 'right' },
+    { key: 'superoSla', label: 'Estatus SLA', sortable: false, align: 'center' },
+  ];
   private readonly metricasSvc = inject(MetricasService);
   private readonly deptoSvc = inject(DepartamentoService);
   private readonly actividadSvc = inject(ActividadService);

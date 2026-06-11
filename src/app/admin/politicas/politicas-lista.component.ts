@@ -5,11 +5,15 @@ import { PoliticaService } from '../../core/services/politica.service';
 import { DiagramaWorkflow } from '../../core/models/diagrama.model';
 import { Politica } from '../../core/models/politica.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { ModalComponent } from '../../shared/ui/modal/modal.component';
+import { StatusBadgeComponent, StatusVariant } from '../../shared/ui/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-politicas-lista',
-  imports: [RouterLink],
+  imports: [RouterLink, ModalComponent, StatusBadgeComponent, EmptyStateComponent],
   templateUrl: './politicas-lista.component.html',
+  styleUrl: './politicas-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoliticasListaComponent {
@@ -83,13 +87,11 @@ export class PoliticasListaComponent {
     return estados.filter((estado) => estado !== estadoActual);
   }
 
-  getEstadoBadgeClass(estado: string): string {
-    const clases: Record<string, string> = {
-      activa: 'bg-success',
-      borrador: 'bg-warning text-dark',
-      archivada: 'bg-secondary',
-    };
-    return clases[estado] ?? 'bg-secondary';
+  /** Variante semántica del estado de una política (dominio propio). */
+  variantePolitica(estado: string): StatusVariant {
+    if (estado === 'activa') return 'success';
+    if (estado === 'borrador') return 'warning';
+    return 'neutral';
   }
 
   abrirModalAsignar(politica: Politica): void {

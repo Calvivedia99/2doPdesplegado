@@ -12,22 +12,67 @@ import { NivelRiesgo } from '../../core/models/tramite-riesgo.model';
   selector: 'app-chip-riesgo',
   imports: [DecimalPipe],
   template: `
-    <span class="badge rounded-pill {{ clase() }}" [title]="tooltip()">
-      <span class="dot me-1">●</span>
+    <span class="chip {{ clase() }}" [title]="tooltip()">
+      <span class="chip-dot" aria-hidden="true"></span>
       {{ label() }}
       @if (mostrarProb() && probSla() != null) {
-        <span class="ms-1 opacity-75">{{ (probSla()! * 100) | number: '1.0-0' }}%</span>
+        <span class="chip-prob oi-mono">{{ (probSla()! * 100) | number: '1.0-0' }}%</span>
       }
     </span>
   `,
   styles: [
     `
-      .badge { font-weight: 500; padding: 0.35em 0.7em; font-size: 0.75rem; }
-      .dot { font-size: 0.6rem; line-height: 1; }
-      .bg-riesgo-alto         { background-color: #dc3545; color: #fff; }
-      .bg-riesgo-medio        { background-color: #f59e0b; color: #1f2937; }
-      .bg-riesgo-bajo         { background-color: #10b981; color: #fff; }
-      .bg-riesgo-desconocido  { background-color: #6b7280; color: #fff; }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.2rem 0.55rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        line-height: 1.3;
+        border-radius: 999px;
+        border: 1px solid transparent;
+      }
+      .chip-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        flex: 0 0 auto;
+      }
+      .chip-prob { opacity: 0.75; }
+      .chip-alto {
+        color: var(--cre-danger-500);
+        background: color-mix(in srgb, var(--cre-danger-500) 12%, var(--cre-surface));
+        border-color: color-mix(in srgb, var(--cre-danger-500) 28%, transparent);
+      }
+      .chip-medio {
+        color: var(--cre-warning-500);
+        background: color-mix(in srgb, var(--cre-warning-500) 12%, var(--cre-surface));
+        border-color: color-mix(in srgb, var(--cre-warning-500) 28%, transparent);
+      }
+      .chip-bajo {
+        color: var(--cre-success-600);
+        background: color-mix(in srgb, var(--cre-success-500) 12%, var(--cre-surface));
+        border-color: color-mix(in srgb, var(--cre-success-500) 28%, transparent);
+      }
+      .chip-desconocido {
+        color: var(--cre-text-muted);
+        background: var(--cre-surface-2);
+        border-color: var(--cre-border);
+      }
+      /* Halo pulsante SOLO en riesgo alto */
+      .chip-alto .chip-dot {
+        animation: oi-riesgo-pulse 2s var(--cre-ease, ease) infinite;
+      }
+      @keyframes oi-riesgo-pulse {
+        0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cre-danger-500) 55%, transparent); }
+        70% { box-shadow: 0 0 0 5px transparent; }
+        100% { box-shadow: 0 0 0 0 transparent; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .chip-alto .chip-dot { animation: none; }
+      }
     `,
   ],
   standalone: true,
@@ -47,7 +92,7 @@ export class ChipRiesgoComponent {
     return 'desconocido';
   });
 
-  protected readonly clase = computed(() => `bg-riesgo-${this.nivelNorm()}`);
+  protected readonly clase = computed(() => `chip-${this.nivelNorm()}`);
 
   protected readonly label = computed(() => {
     const n = this.nivelNorm();

@@ -3,6 +3,20 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
+  LucideAngularModule,
+  LucideIconData,
+  Upload,
+  RefreshCw,
+  Eye,
+  Download,
+  PenLine,
+  Save,
+  Lock,
+  Unlock,
+  Trash2,
+  Circle,
+} from 'lucide-angular';
+import {
   AccionAuditoria,
   ACCIONES,
   AuditoriaItem,
@@ -10,6 +24,7 @@ import {
 } from '../../core/models/auditoria-documento.model';
 import { AuditoriaDocumentoService } from '../../core/services/auditoria-documento.service';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { StatusBadgeComponent, StatusVariant } from '../../shared/ui/status-badge/status-badge.component';
 
 /**
  * CU-37 — Timeline de auditoría de un documento.
@@ -20,7 +35,7 @@ import { mensajeAmigable } from '../../core/utils/error-messages';
  */
 @Component({
   selector: 'app-auditoria-documento',
-  imports: [DatePipe, FormsModule, JsonPipe, KeyValuePipe, RouterLink],
+  imports: [DatePipe, FormsModule, JsonPipe, KeyValuePipe, RouterLink, LucideAngularModule, StatusBadgeComponent],
   templateUrl: './auditoria-documento.component.html',
   styleUrl: './auditoria-documento.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -123,33 +138,31 @@ export class AuditoriaDocumentoComponent {
     }
   }
 
-  badgeAccion(accion: string): string {
+  /** Variante semántica de la acción (texto del badge y color del dot). */
+  varianteAccion(accion: string): StatusVariant {
     switch (accion as AccionAuditoria) {
-      case 'SUBIDA':           return 'bg-success';
-      case 'NUEVA_VERSION':    return 'bg-primary';
-      case 'LECTURA':          return 'bg-info text-dark';
-      case 'DESCARGA':         return 'bg-secondary';
-      case 'EDICION_EN_VIVO':  return 'bg-warning text-dark';
-      case 'EDICION_GUARDADA': return 'bg-warning text-dark';
-      case 'BLOQUEO':          return 'bg-dark';
-      case 'DESBLOQUEO':       return 'bg-dark';
-      case 'BORRADO':          return 'bg-danger';
-      default:                 return 'bg-secondary';
+      case 'SUBIDA':           return 'success';
+      case 'NUEVA_VERSION':    return 'brand';
+      case 'LECTURA':          return 'info';
+      case 'EDICION_EN_VIVO':  return 'warning';
+      case 'EDICION_GUARDADA': return 'warning';
+      case 'BORRADO':          return 'danger';
+      default:                 return 'neutral';
     }
   }
 
-  iconoAccion(accion: string): string {
+  iconoAccion(accion: string): LucideIconData {
     switch (accion as AccionAuditoria) {
-      case 'SUBIDA':           return '⬆️';
-      case 'NUEVA_VERSION':    return '🔄';
-      case 'LECTURA':          return '👁️';
-      case 'DESCARGA':         return '⬇️';
-      case 'EDICION_EN_VIVO':  return '✍️';
-      case 'EDICION_GUARDADA': return '💾';
-      case 'BLOQUEO':          return '🔒';
-      case 'DESBLOQUEO':       return '🔓';
-      case 'BORRADO':          return '🗑️';
-      default:                 return '•';
+      case 'SUBIDA':           return Upload as LucideIconData;
+      case 'NUEVA_VERSION':    return RefreshCw as LucideIconData;
+      case 'LECTURA':          return Eye as LucideIconData;
+      case 'DESCARGA':         return Download as LucideIconData;
+      case 'EDICION_EN_VIVO':  return PenLine as LucideIconData;
+      case 'EDICION_GUARDADA': return Save as LucideIconData;
+      case 'BLOQUEO':          return Lock as LucideIconData;
+      case 'DESBLOQUEO':       return Unlock as LucideIconData;
+      case 'BORRADO':          return Trash2 as LucideIconData;
+      default:                 return Circle as LucideIconData;
     }
   }
 

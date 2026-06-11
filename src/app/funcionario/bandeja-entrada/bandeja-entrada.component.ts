@@ -2,11 +2,18 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { catchError, filter, forkJoin, of, OperatorFunction } from 'rxjs';
+import { LucideAngularModule, LucideIconData, Sparkles } from 'lucide-angular';
 import { ChipRiesgoComponent } from '../../shared/chip-riesgo/chip-riesgo.component';
 import { PrediccionService } from '../../core/services/prediccion.service';
 import { TramiteC2Service } from '../../core/services/tramite-c2.service';
 import { NivelRiesgo, TramiteRiesgo } from '../../core/models/tramite-riesgo.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { PageHeaderComponent } from '../../shared/ui/page-header/page-header.component';
+import { TableComponent } from '../../shared/ui/table/table.component';
+import { ColumnTemplateDirective } from '../../shared/ui/table/column.directive';
+import { ColumnDef } from '../../shared/ui/table/column-def';
+import { StatusBadgeComponent } from '../../shared/ui/status-badge/status-badge.component';
+import { estadoVariant } from '../../shared/ui/estado-visual';
 
 type Orden = 'fecha' | 'ia';
 
@@ -31,7 +38,14 @@ function catchToEmpty<T>(): OperatorFunction<T[], T[]> {
 
 @Component({
   selector: 'app-bandeja-entrada',
-  imports: [ChipRiesgoComponent],
+  imports: [
+    LucideAngularModule,
+    ChipRiesgoComponent,
+    PageHeaderComponent,
+    TableComponent,
+    ColumnTemplateDirective,
+    StatusBadgeComponent,
+  ],
   templateUrl: './bandeja-entrada.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,6 +57,19 @@ export class BandejaEntradaComponent {
   readonly tramites = signal<TramiteEnBandeja[]>([]);
   readonly loading = signal(false);
   readonly error = signal('');
+
+  protected readonly estadoVariant = estadoVariant;
+  protected readonly sparklesIcon = Sparkles as LucideIconData;
+
+  readonly columnas: ColumnDef[] = [
+    { key: 'codigo', label: 'Código', sortable: false, width: '110px' },
+    { key: 'politicaNombre', label: 'Política', sortable: false },
+    { key: 'estado', label: 'Estado', sortable: false },
+    { key: 'fechaInicio', label: 'Recibido', sortable: false },
+    { key: 'riesgo', label: 'Riesgo', sortable: false, searchable: false, align: 'center' },
+    { key: 'prioridad', label: 'Prioridad', sortable: false, searchable: false, align: 'center', width: '90px' },
+    { key: 'acciones', label: '', sortable: false, searchable: false, align: 'right', width: '110px' },
+  ];
 
   /** CU-44 — orden 'fecha' (default) o 'ia' (delegado al microservicio). */
   readonly orden = signal<Orden>('fecha');

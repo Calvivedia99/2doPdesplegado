@@ -1,17 +1,16 @@
 @if (tramite(); as data) {
-  <section class="container py-4">
-    <div class="d-flex align-items-center gap-3 mb-4">
-      <a routerLink="/funcionario/bandeja" class="btn btn-sm btn-outline-secondary">Volver</a>
-      <h1 class="h4 mb-0">Tramite: <code>{{ data.codigo }}</code></h1>
-      <span [class]="'badge ' + getEstadoBadgeClass(data.estado)">{{ data.estado }}</span>
+  <section class="td">
+    <div class="td-topbar">
+      <a routerLink="/funcionario/bandeja" class="oi-btn oi-btn-secondary oi-btn-sm">Volver</a>
+      <h1 class="td-title">Trámite <span class="oi-mono">{{ data.codigo }}</span></h1>
+      <app-status-badge [variant]="estadoVariant(data.estado)" [dot]="true">{{ data.estado }}</app-status-badge>
     </div>
 
     @if (exito()) {
-      <div class="alert alert-success" role="alert">{{ exito() }}</div>
+      <div class="alert alert-success py-2" role="alert">{{ exito() }}</div>
     }
-
     @if (error()) {
-      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
     }
 
     @if (loading()) {
@@ -21,42 +20,31 @@
     } @else {
       <div class="row g-4">
         <div class="col-md-5">
-          <article class="card mb-3 shadow-sm border-0">
-            <div class="card-header fw-semibold">Informacion del Tramite</div>
-            <div class="card-body small">
-              <table class="table table-sm mb-0">
-                <tr>
-                  <td class="text-muted">Politica</td>
-                  <td>{{ data.politicaNombre }}</td>
-                </tr>
-                <tr>
-                  <td class="text-muted">Cliente</td>
-                  <td>{{ data.clienteNombre ?? '—' }}</td>
-                </tr>
-                <tr>
-                  <td class="text-muted">Inicio</td>
-                  <td>{{ data.fechaInicio | date: 'short' }}</td>
-                </tr>
-                <tr>
-                  <td class="text-muted">Progreso</td>
-                  <td>
-                    <div class="progress" style="height: 6px; width: 120px">
-                      <div class="progress-bar" [style.width.%]="data.progreso"></div>
-                    </div>
-                    {{ data.progreso }}%
-                  </td>
-                </tr>
-              </table>
+          <article class="oi-card td-panel mb-3">
+            <header class="td-panel-head">Información del trámite</header>
+            <div class="td-panel-body">
+              <dl class="td-info">
+                <div><dt>Política</dt><dd>{{ data.politicaNombre }}</dd></div>
+                <div><dt>Cliente</dt><dd>{{ data.clienteNombre ?? '—' }}</dd></div>
+                <div><dt>Inicio</dt><dd class="oi-mono">{{ data.fechaInicio | date: 'short' }}</dd></div>
+                <div>
+                  <dt>Progreso</dt>
+                  <dd class="td-progress">
+                    <span class="td-bar-track"><span class="td-bar-fill" [style.--w]="data.progreso + '%'"></span></span>
+                    <span class="oi-mono">{{ data.progreso }}%</span>
+                  </dd>
+                </div>
+              </dl>
             </div>
           </article>
 
           @if (data.nodoActual; as nodo) {
-            <article class="card shadow-sm border-0">
-              <div class="card-header fw-semibold d-flex justify-content-between">
-                <span>Nodo Actual</span>
-                <span [class]="'badge ' + getEstadoBadgeClass(nodo.estado)">{{ nodo.estado }}</span>
-              </div>
-              <div class="card-body">
+            <article class="oi-card td-panel">
+              <header class="td-panel-head td-panel-head-row">
+                <span>Nodo actual</span>
+                <app-status-badge [variant]="estadoVariant(nodo.estado)" [dot]="true">{{ nodo.estado }}</app-status-badge>
+              </header>
+              <div class="td-panel-body">
                 <p class="fw-bold mb-1">{{ nodo.nombre }}</p>
                 <p class="text-muted small">Tipo: {{ nodo.tipo }}</p>
 
@@ -67,7 +55,7 @@
                     <form [formGroup]="form" (ngSubmit)="completarNodo()" novalidate>
                       @if (decisionSiguiente(); as dec) {
                         <div class="mb-2">
-                          <label class="form-label small">🔀 {{ dec.pregunta }}</label>
+                          <label class="oi-label">{{ dec.pregunta }}</label>
                           <select class="form-select form-select-sm" formControlName="resultado">
                             @for (op of dec.opciones; track op.valor) {
                               <option [value]="op.valor">
@@ -78,7 +66,7 @@
                         </div>
                       } @else {
                         <div class="mb-2">
-                          <label class="form-label small" for="resultado">Resultado *</label>
+                          <label class="oi-label" for="resultado">Resultado *</label>
                           <select id="resultado" class="form-select form-select-sm" formControlName="resultado">
                             <option value="completado">Completado</option>
                             <option value="aprobado">Aprobado</option>
@@ -88,7 +76,7 @@
                       }
 
                       <div class="mb-3">
-                        <label class="form-label small" for="observaciones">Observaciones</label>
+                        <label class="oi-label" for="observaciones">Observaciones</label>
                         <textarea
                           id="observaciones"
                           class="form-control form-control-sm"
@@ -97,18 +85,18 @@
                         ></textarea>
                       </div>
 
-                      <button type="submit" class="btn btn-success btn-sm w-100" [disabled]="procesando()">
+                      <button type="submit" class="oi-btn oi-btn-primary oi-btn-sm w-100" [disabled]="procesando()">
                         @if (procesando()) {
                           <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
                         }
-                        {{ procesando() ? 'Procesando...' : (decisionSiguiente() ? 'Continuar →' : 'Completar Nodo') }}
+                        {{ procesando() ? 'Procesando…' : (decisionSiguiente() ? 'Continuar' : 'Completar nodo') }}
                       </button>
                     </form>
                   </div>
                 }
 
                 @if (finalizado()) {
-                  <div class="text-center text-success mt-3">Tramite finalizado</div>
+                  <div class="text-center mt-3" style="color: var(--cre-success-600)">Trámite finalizado</div>
                 }
               </div>
             </article>
@@ -116,34 +104,27 @@
         </div>
 
         <div class="col-md-7">
-          <!-- CU-42 (Ruta óptima IA) removido de la vista del funcionario.
-               El flujo correcto es: el cliente describe su problema desde la
-               app móvil (CU-40 → IniciarTramiteIaScreen) y la IA sugiere
-               qué trámite usar — no se le sugiere ruta al funcionario. -->
-
-          <article class="card shadow-sm border-0">
-            <div class="card-header fw-semibold">Historial del Flujo</div>
-            <div class="card-body p-0">
-              <ul class="list-group list-group-flush">
+          <article class="oi-card td-panel">
+            <header class="td-panel-head">Historial del flujo</header>
+            <div class="td-panel-body p-0">
+              <ul class="td-historial">
                 @for (hito of data.historial; track hito.nodoId + '-' + (hito.fechaCompletado ?? '')) {
-                  <li class="list-group-item py-2">
-                    <div class="d-flex justify-content-between align-items-start">
-                      <div>
-                        <span class="fw-semibold">{{ hito.nombre }}</span><br />
-                        @if (hito.observaciones) {
-                          <span class="text-muted small">{{ hito.observaciones }}</span>
-                        }
-                      </div>
-                      <div class="text-end">
-                        <span [class]="'badge ' + getEstadoBadgeClass(hito.estado)">{{ hito.estado }}</span><br />
-                        @if (hito.resultado) {
-                          <span class="text-muted small">{{ hito.resultado }}</span>
-                        }
-                      </div>
+                  <li class="td-hito">
+                    <div>
+                      <span class="fw-semibold">{{ hito.nombre }}</span>
+                      @if (hito.observaciones) {
+                        <span class="td-hito-obs">{{ hito.observaciones }}</span>
+                      }
+                    </div>
+                    <div class="td-hito-end">
+                      <app-status-badge [variant]="estadoVariant(hito.estado)">{{ hito.estado }}</app-status-badge>
+                      @if (hito.resultado) {
+                        <span class="text-muted small">{{ hito.resultado }}</span>
+                      }
                     </div>
                   </li>
                 } @empty {
-                  <li class="list-group-item text-muted text-center py-3">Sin historial aun</li>
+                  <li class="td-hito td-hito-empty">Sin historial aún</li>
                 }
               </ul>
             </div>
@@ -153,12 +134,12 @@
     }
   </section>
 } @else {
-  <section class="container py-4 text-center">
+  <section class="td text-center">
     @if (loading()) {
       <div class="spinner-border text-primary" aria-hidden="true"></div>
     } @else {
-      <p class="text-muted">Tramite no encontrado</p>
-      <a routerLink="/funcionario/bandeja" class="btn btn-secondary">Volver</a>
+      <p class="text-muted">Trámite no encontrado</p>
+      <a routerLink="/funcionario/bandeja" class="oi-btn oi-btn-secondary oi-btn-sm">Volver</a>
     }
   </section>
 }

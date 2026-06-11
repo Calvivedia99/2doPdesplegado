@@ -1,6 +1,4 @@
-<section class="container-fluid py-4">
-  <h1 class="h4 mb-4">Actividades del Sistema</h1>
-
+<section>
   @if (exito()) {
     <div class="alert alert-success" role="alert">{{ exito() }}</div>
   }
@@ -93,7 +91,7 @@
                     [disabled]="!documentoAAgregar()"
                     title="Agregar documento requerido"
                   >
-                    +
+                    <lucide-icon [img]="plusIcon" [size]="14"></lucide-icon>
                   </button>
                 </div>
 
@@ -136,11 +134,11 @@
                             <td class="text-center">
                               <button
                                 type="button"
-                                class="btn btn-sm btn-outline-danger py-0 px-1"
+                                class="oi-btn oi-btn-ghost oi-btn-icon"
                                 (click)="quitarRequisito(req.documentoId)"
                                 title="Quitar"
                               >
-                                ✕
+                                <lucide-icon [img]="xIcon" [size]="14"></lucide-icon>
                               </button>
                             </td>
                           </tr>
@@ -177,71 +175,55 @@
     </div>
 
     <div class="col-md-7">
-      <div class="card shadow-sm border-0">
-        <div class="table-responsive">
-          <table class="table table-sm table-hover mb-0 align-middle">
-            <thead class="table-light">
-              <tr>
-                <th>Nombre</th>
-                <th>Dept.</th>
-                <th>Responsable</th>
-                <th>SLA</th>
-                <th>Documentos</th>
-                <th>Reutilizable</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (actividad of actividades(); track actividad.id) {
-                <tr>
-                  <td>{{ actividad.nombre }}</td>
-                  <td><span class="badge bg-secondary">{{ getNombreDepto(actividad.departamentoId) }}</span></td>
-                  <td>
-                    <small>{{ getNombreFuncionario(actividad.funcionarioResponsableId) }}</small>
-                  </td>
-                  <td>{{ actividad.slaHoras }}h</td>
-                  <td>
-                    @if (actividad.documentoIds && actividad.documentoIds.length > 0) {
-                      <div class="d-flex flex-wrap gap-1">
-                        @for (docId of actividad.documentoIds; track docId) {
-                          <span class="badge bg-primary">{{ getNombreDocumento(docId) }}</span>
-                        }
-                      </div>
-                    } @else {
-                      <span class="text-muted">—</span>
-                    }
-                  </td>
-                  <td>
-                    @if (actividad.reutilizable) {
-                      <span class="text-success">Si</span>
-                    } @else {
-                      <span class="text-muted">No</span>
-                    }
-                  </td>
-                  <td>
-                    <div class="btn-group btn-group-sm">
-                      <button type="button" class="btn btn-outline-secondary" (click)="editar(actividad)">Editar</button>
-                      <button
-                        type="button"
-                        class="btn btn-outline-dark"
-                        (click)="abrirPermisos(actividad)"
-                        title="Configurar permiso documental por punto de atención (CU-36)"
-                      >
-                        Permisos
-                      </button>
-                      <button type="button" class="btn btn-outline-danger" (click)="eliminar(actividad.id)">Eliminar</button>
-                    </div>
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="7" class="text-center text-muted py-4">Sin actividades registradas</td>
-                </tr>
+      <app-table
+        [columns]="columnasActividades"
+        [data]="$any(actividades())"
+        searchPlaceholder="Buscar actividad…"
+        [pageSize]="25"
+        emptyTitle="Sin actividades registradas"
+        emptyDescription="Crea la primera actividad con el formulario."
+      >
+        <ng-template appColumn="nombre" let-row>
+          <span class="fw-medium">{{ row.nombre }}</span>
+        </ng-template>
+        <ng-template appColumn="departamentoId" let-row>
+          <span class="oi-badge oi-badge-neutral">{{ getNombreDepto(row.departamentoId) }}</span>
+        </ng-template>
+        <ng-template appColumn="funcionarioResponsableId" let-row>
+          <span class="text-muted">{{ getNombreFuncionario(row.funcionarioResponsableId) }}</span>
+        </ng-template>
+        <ng-template appColumn="slaHoras" let-row>
+          <span class="oi-mono">{{ row.slaHoras }}h</span>
+        </ng-template>
+        <ng-template appColumn="documentoIds" let-row>
+          @if (row.documentoIds && row.documentoIds.length > 0) {
+            <div class="d-flex flex-wrap gap-1">
+              @for (docId of row.documentoIds; track docId) {
+                <span class="oi-badge oi-badge-accent">{{ getNombreDocumento(docId) }}</span>
               }
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </div>
+          } @else {
+            <span class="text-muted">—</span>
+          }
+        </ng-template>
+        <ng-template appColumn="reutilizable" let-row>
+          <app-status-badge [variant]="row.reutilizable ? 'success' : 'neutral'">
+            {{ row.reutilizable ? 'Sí' : 'No' }}
+          </app-status-badge>
+        </ng-template>
+        <ng-template appColumn="acciones" let-row>
+          <div class="oi-row-actions">
+            <button type="button" class="oi-btn oi-btn-secondary oi-btn-sm" (click)="editar(row)">Editar</button>
+            <button
+              type="button"
+              class="oi-btn oi-btn-ghost oi-btn-sm"
+              (click)="abrirPermisos(row)"
+              title="Configurar permiso documental por punto de atención (CU-36)"
+            >Permisos</button>
+            <button type="button" class="oi-btn oi-btn-danger-outline oi-btn-sm" (click)="eliminar(row.id)">Eliminar</button>
+          </div>
+        </ng-template>
+      </app-table>
     </div>
   </div>
 </section>

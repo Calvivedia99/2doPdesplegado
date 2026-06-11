@@ -5,11 +5,14 @@ import { PoliticaService } from '../../core/services/politica.service';
 import { DiagramaWorkflow } from '../../core/models/diagrama.model';
 import { Politica } from '../../core/models/politica.model';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { StatusBadgeComponent, StatusVariant } from '../../shared/ui/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../../shared/ui/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-diagramas-lista',
-  imports: [RouterLink],
+  imports: [RouterLink, StatusBadgeComponent, EmptyStateComponent],
   templateUrl: './diagramas-lista.component.html',
+  styleUrl: './diagramas-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiagramasListaComponent {
@@ -66,12 +69,9 @@ export class DiagramasListaComponent {
     });
   }
 
-  getEstadoBadgeClass(estado: string): string {
-    const clases: Record<string, string> = {
-      borrador: 'bg-warning text-dark',
-      publicado: 'bg-success',
-      archivado: 'bg-secondary',
-    };
-    return clases[estado] ?? 'bg-secondary';
+  varianteDiagrama(estado: string): StatusVariant {
+    if (estado === 'publicado') return 'success';
+    if (estado === 'borrador') return 'warning';
+    return 'neutral';
   }
 }

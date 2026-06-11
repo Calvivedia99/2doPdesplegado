@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { mensajeAmigable } from '../../core/utils/error-messages';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,9 @@ export class LoginComponent {
 
   readonly loading = signal(false);
   readonly error = signal('');
+
+  /** El panel de cuentas demo solo se muestra en entornos no productivos. */
+  readonly mostrarDemo = environment.demoAccounts === true;
 
   readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

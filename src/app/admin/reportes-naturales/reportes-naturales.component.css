@@ -4,3 +4,42 @@ pre {
   max-height: 200px;
   overflow: auto;
 }
+
+/* Gráfico de barras tokenizado */
+.rn-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.rn-bar-label {
+  width: 30%;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: var(--cre-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rn-bar-track {
+  flex: 1;
+  height: 1.1rem;
+  background: var(--cre-bg-muted);
+  border-radius: var(--cre-radius-sm);
+  overflow: hidden;
+}
+.rn-bar-fill {
+  display: block;
+  height: 100%;
+  width: var(--w, 0%);
+  background: var(--cre-accent);
+  border-radius: var(--cre-radius-sm);
+  transition: width 500ms var(--cre-ease);
+}
+.rn-bar-val {
+  width: 3rem;
+  text-align: right;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--cre-text);
+}

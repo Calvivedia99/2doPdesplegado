@@ -1,11 +1,13 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LucideAngularModule, LucideIconData, Sparkles, CheckCircle2, CornerUpRight, Ban } from 'lucide-angular';
 import {
   CandidatoPolitica,
   SugerirPoliticaResponse,
 } from '../../core/models/sugerencia-politica.model';
 import { IaService } from '../../core/services/ia.service';
+import { StatusBadgeComponent, StatusVariant } from '../../shared/ui/status-badge/status-badge.component';
 
 /**
  * CU-40 — Sugerencia automática de política a partir de descripción libre.
@@ -21,13 +23,18 @@ import { IaService } from '../../core/services/ia.service';
  */
 @Component({
   selector: 'app-sugerir-politica',
-  imports: [DecimalPipe, FormsModule],
+  imports: [DecimalPipe, FormsModule, LucideAngularModule, StatusBadgeComponent],
   templateUrl: './sugerir-politica.component.html',
   styleUrl: './sugerir-politica.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SugerirPoliticaComponent {
   private readonly iaSvc = inject(IaService);
+
+  protected readonly sparklesIcon = Sparkles as LucideIconData;
+  protected readonly aceptadaIcon = CheckCircle2 as LucideIconData;
+  protected readonly cambiadaIcon = CornerUpRight as LucideIconData;
+  protected readonly canceladaIcon = Ban as LucideIconData;
 
   readonly descripcion = signal('');
   readonly sugerencia = signal<SugerirPoliticaResponse | null>(null);
@@ -129,9 +136,9 @@ export class SugerirPoliticaComponent {
     this.descripcion.set(ej);
   }
 
-  badgeConfianza(c: number): string {
-    if (c >= 0.7) return 'bg-success';
-    if (c >= 0.4) return 'bg-warning text-dark';
-    return 'bg-secondary';
+  varianteConfianza(c: number): StatusVariant {
+    if (c >= 0.7) return 'success';
+    if (c >= 0.4) return 'warning';
+    return 'neutral';
   }
 }

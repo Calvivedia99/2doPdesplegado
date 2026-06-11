@@ -6,6 +6,14 @@ import {
   Notificacion,
   NotificacionesService,
 } from '../../core/services/notificaciones.service';
+import { PageHeaderComponent } from '../ui/page-header/page-header.component';
+import { StatusBadgeComponent, StatusVariant } from '../ui/status-badge/status-badge.component';
+import { EmptyStateComponent } from '../ui/empty-state/empty-state.component';
+
+interface GrupoNotif {
+  label: string;
+  items: Notificacion[];
+}
 
 /**
  * P1 §7 — Panel de notificaciones internas de la plataforma web.
@@ -14,75 +22,140 @@ import {
  */
 @Component({
   selector: 'app-notificaciones',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, PageHeaderComponent, StatusBadgeComponent, EmptyStateComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="container py-4">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <h1 class="h4 mb-0">Notificaciones</h1>
-          <p class="text-muted small mb-0">
-            Avisos del sistema: trámites que llegan a tu área, SLA, riesgo, documentos.
-          </p>
+    <section class="nt">
+      <app-page-header
+        eyebrow="Avisos"
+        title="Notificaciones"
+        description="Trámites que llegan a tu área, SLA, riesgo y documentos."
+      >
+        <div header-actions class="d-flex gap-2">
+          @if (hayNoLeidas()) {
+            <button class="oi-btn oi-btn-ghost oi-btn-sm" type="button" (click)="marcarTodas()">Marcar todas</button>
+          }
+          <button class="oi-btn oi-btn-secondary oi-btn-sm" type="button" (click)="svc.refrescar()">Actualizar</button>
         </div>
-        <button class="btn btn-sm btn-outline-secondary" type="button" (click)="svc.refrescar()">
-          Actualizar
-        </button>
-      </div>
+      </app-page-header>
 
       @if (svc.lista().length === 0) {
-        <div class="card border-0 shadow-sm">
-          <div class="card-body text-center text-muted py-5">No tienes notificaciones.</div>
-        </div>
+        <app-empty-state title="Sin notificaciones" description="No tienes avisos por ahora." />
       } @else {
-        <div class="list-group shadow-sm">
-          @for (n of svc.lista(); track n.id) {
-            <div
-              class="list-group-item d-flex align-items-start gap-3"
-              [class.bg-body-tertiary]="!n.leida"
-            >
-              <span class="badge mt-1" [class]="badgeDe(n)">{{ etiquetaDe(n) }}</span>
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between">
-                  <strong [class.fw-normal]="n.leida">{{ n.titulo }}</strong>
-                  <small class="text-muted ms-2 text-nowrap">
-                    {{ n.fechaCreacion | date: 'dd/MM/yy HH:mm' }}
-                  </small>
-                </div>
-                <div class="small text-body-secondary">{{ n.mensaje }}</div>
-                <div class="mt-1 d-flex gap-3">
-                  @if (esFuncionario() && n.tramiteId) {
-                    <a
-                      class="small text-decoration-none"
-                      [routerLink]="['/funcionario/tramites', n.tramiteId]"
-                      (click)="marcar(n)"
-                    >
-                      Ver trámite →
-                    </a>
-                  }
-                  @if (!n.leida) {
-                    <button
-                      type="button"
-                      class="btn btn-link btn-sm p-0 small text-decoration-none"
-                      (click)="marcar(n)"
-                    >
-                      Marcar leída
-                    </button>
-                  }
-                </div>
-              </div>
+        @for (grupo of grupos(); track grupo.label) {
+          <div class="nt-grupo">
+            <h2 class="oi-eyebrow nt-grupo-label">{{ grupo.label }}</h2>
+            <div class="nt-list">
+              @for (n of grupo.items; track n.id) {
+                <article class="nt-item" [class.unread]="!n.leida">
+                  <app-status-badge [variant]="varianteTipo(n)">{{ etiquetaDe(n) }}</app-status-badge>
+                  <div class="nt-body">
+                    <div class="nt-row">
+                      <span class="nt-title" [class.read]="n.leida">{{ n.titulo }}</span>
+                      <span class="nt-time oi-mono">{{ n.fechaCreacion | date: 'dd/MM/yy HH:mm' }}</span>
+                    </div>
+                    <div class="nt-msg">{{ n.mensaje }}</div>
+                    <div class="nt-actions">
+                      @if (esFuncionario() && n.tramiteId) {
+                        <a class="nt-link" [routerLink]="['/funcionario/tramites', n.tramiteId]" (click)="marcar(n)">
+                          Ver trámite
+                        </a>
+                      }
+                      @if (!n.leida) {
+                        <button type="button" class="nt-link" (click)="marcar(n)">Marcar leída</button>
+                      }
+                    </div>
+                  </div>
+                </article>
+              }
             </div>
-          }
-        </div>
+          </div>
+        }
       }
     </section>
   `,
+  styles: [`
+    :host { display: block; }
+    .nt { max-width: 800px; margin: 0 auto; }
+    .nt-grupo { margin-bottom: 1.25rem; }
+    .nt-grupo-label { display: block; margin-bottom: 0.5rem; }
+    .nt-list {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--cre-border);
+      border-radius: var(--cre-radius-lg);
+      overflow: hidden;
+      background: var(--cre-surface);
+    }
+    .nt-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--cre-border);
+      position: relative;
+    }
+    .nt-item:last-child { border-bottom: none; }
+    .nt-item.unread { background: var(--cre-accent-tint); }
+    .nt-item.unread::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--cre-accent);
+    }
+    .nt-body { flex: 1; min-width: 0; }
+    .nt-row { display: flex; justify-content: space-between; gap: 0.75rem; }
+    .nt-title { font-size: 0.875rem; font-weight: 600; color: var(--cre-text); }
+    .nt-title.read { font-weight: 500; color: var(--cre-text-muted); }
+    .nt-time { font-size: 0.72rem; color: var(--cre-text-subtle); white-space: nowrap; }
+    .nt-msg { font-size: 0.8125rem; color: var(--cre-text-muted); margin-top: 0.15rem; }
+    .nt-actions { display: flex; gap: 1rem; margin-top: 0.5rem; }
+    .nt-link {
+      font-size: 0.78rem;
+      color: var(--cre-accent);
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .nt-link:hover { text-decoration: underline; }
+  `],
 })
 export class NotificacionesComponent {
   readonly svc = inject(NotificacionesService);
   private readonly auth = inject(AuthService);
 
   readonly esFuncionario = computed(() => this.auth.isFuncionario());
+  readonly hayNoLeidas = computed(() => this.svc.lista().some((n) => !n.leida));
+
+  /** Agrupa por día (Hoy / Ayer / fecha), más reciente primero. */
+  readonly grupos = computed<GrupoNotif[]>(() => {
+    const items = this.svc.lista();
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const ayer = new Date(hoy);
+    ayer.setDate(ayer.getDate() - 1);
+
+    const map = new Map<number, GrupoNotif>();
+    for (const n of items) {
+      const d = new Date(n.fechaCreacion);
+      const floor = new Date(d);
+      floor.setHours(0, 0, 0, 0);
+      const t = floor.getTime();
+      if (!map.has(t)) {
+        let label: string;
+        if (t === hoy.getTime()) label = 'Hoy';
+        else if (t === ayer.getTime()) label = 'Ayer';
+        else label = d.toLocaleDateString('es-BO', { day: '2-digit', month: 'long', year: 'numeric' });
+        map.set(t, { label, items: [] });
+      }
+      map.get(t)!.items.push(n);
+    }
+    return Array.from(map.entries())
+      .sort((a, b) => b[0] - a[0])
+      .map((e) => e[1]);
+  });
 
   constructor() {
     this.svc.refrescar();
@@ -96,22 +169,30 @@ export class NotificacionesComponent {
     });
   }
 
-  badgeDe(n: Notificacion): string {
+  marcarTodas(): void {
+    for (const n of this.svc.lista()) {
+      if (!n.leida) {
+        this.svc.marcarLeida(n.id).subscribe({ next: () => this.svc.refrescar(), error: () => {} });
+      }
+    }
+  }
+
+  varianteTipo(n: Notificacion): StatusVariant {
     switch (n.tipo) {
       case 'sla_vencido':
-        return 'text-bg-danger';
+        return 'danger';
       case 'riesgo_demora_alto':
-        return 'text-bg-warning';
+      case 'anomalia_detectada':
+        return 'warning';
       case 'asignacion':
       case 'asignacion_auto':
-        return 'text-bg-primary';
+        return 'brand';
       case 'documento':
       case 'documentos_pendientes':
-        return 'text-bg-info';
-      case 'anomalia_detectada':
-        return 'text-bg-warning';
+      case 'cambio_estado':
+        return 'info';
       default:
-        return 'text-bg-secondary';
+        return 'neutral';
     }
   }
 

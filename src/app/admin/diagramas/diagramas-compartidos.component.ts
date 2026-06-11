@@ -21,9 +21,9 @@ import { mensajeAmigable } from '../../core/utils/error-messages';
   imports: [DatePipe, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="container-fluid py-4">
+    <section>
       <div class="mb-3">
-        <h1 class="h4 mb-0">Compartidos conmigo</h1>
+        <h1 class="h5 mb-0">Compartidos conmigo</h1>
         <p class="text-muted small mb-0">
           Diagramas a los que te invitaron a colaborar (solo por invitación).
         </p>
