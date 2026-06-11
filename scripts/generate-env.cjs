@@ -10,8 +10,8 @@ const fallback = {
   apiUrl: '/api',
 };
 
-// El panel de cuentas demo (credenciales del seeder) SOLO debe verse en dev.
-// Por defecto sigue a !production; se puede forzar con DEMO_ACCOUNTS en .env.
+// El panel de cuentas demo (credenciales del seeder) se muestra por defecto
+// (es un despliegue de demo). Se puede ocultar con DEMO_ACCOUNTS=false.
 
 function parseEnv(content) {
   const result = {};
@@ -62,7 +62,7 @@ const production = toBoolean(process.env.PRODUCTION ?? fileEnv.PRODUCTION, fallb
 const environment = {
   production,
   apiUrl: process.env.API_URL || fileEnv.API_URL || fallback.apiUrl,
-  demoAccounts: toBoolean(process.env.DEMO_ACCOUNTS ?? fileEnv.DEMO_ACCOUNTS, !production),
+  demoAccounts: toBoolean(process.env.DEMO_ACCOUNTS ?? fileEnv.DEMO_ACCOUNTS, true),
 };
 
 const output = `export const environment = ${JSON.stringify(environment, null, 2)};\n`;
